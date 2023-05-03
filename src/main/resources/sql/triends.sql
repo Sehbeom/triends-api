@@ -128,7 +128,6 @@ create table notify
     user_id int,
     sender int,
     notify_type varchar(45),
-    isread tinyint default 0,
     additional_info varchar(255)
 );
 

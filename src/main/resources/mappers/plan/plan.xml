@@ -57,4 +57,14 @@
         where plan_id=#{planId}
     </select>
 
+    <insert id="inviteMember" parameterType="map">
+        insert into notify (user_id, sender, notify_type, additional_info)
+        values (#{userId}, #{sender}, 'plan', #{planId})
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        delete from plan
+        where plan_id=#{planId}
+    </delete>
+
 </mapper>
