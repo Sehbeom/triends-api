@@ -39,7 +39,7 @@
     <select id="courseAttractionJoin" resultType="attractionDto">
         select content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, readcount, sido_code, gugun_code, latitude, longitude, mlevel
         from attraction_info
-        where content_id=#{attraction}
+        where content_id=#{contentId}
     </select>
 
     <select id="getMyPlanList" resultMap="onlyPlan" parameterType="int">
@@ -57,4 +57,53 @@
         where plan_id=#{planId}
     </select>
 
+    <delete id="delete" parameterType="int">
+        delete from plan
+        where plan_id=#{planId}
+    </delete>
+
+    <insert id="createPlan" parameterType="map" useGeneratedKeys="true" keyProperty="plan.planId">
+        insert into plan (title, start_date, end_date, center_lat, center_lng, thumbnail)
+        values (
+                #{plan.title},
+                #{plan.startDate},
+                #{plan.endDate},
+                <include refid="makeCenterLat" />,
+                <include refid="makeCenterLng" />,
+                <include refid="makeThumbnail" />
+                )
+    </insert>
+
+    <sql id="makeCenterLat">
+        (select avg(latitude) from attraction_info where content_id in
+            <foreach collection="courses" item="course" index="index" open="(" close=")" separator=",">
+                #{course.contentId}
+            </foreach>
+            )
+    </sql>
+
+    <sql id="makeCenterLng">
+        (select avg(longitude) from attraction_info where content_id in
+        <foreach collection="courses" item="course" index="index" open="(" close=")" separator=",">
+            #{course.contentId}
+        </foreach>
+        )
+    </sql>
+
+    <sql id="makeThumbnail">
+        (select first_image from attraction_info where content_id in
+        <foreach collection="courses" item="course" index="index" open="(" close=")" separator=",">
+            #{course.contentId}
+        </foreach>
+        and first_image is not null
+        limit 1)
+    </sql>
+
+    <insert id="createCourses" parameterType="map">
+        insert into course (plan_id, days, start_time, end_time, content_id)
+        values
+        <foreach collection="courses" item="course" separator=",">
+            (#{plan.planId}, #{course.days}, #{course.startTime}, #{course.endTime}, #{course.contentId})
+        </foreach>
+    </insert>
 </mapper>

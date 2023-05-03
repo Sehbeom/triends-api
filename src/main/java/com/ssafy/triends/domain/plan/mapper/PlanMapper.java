@@ -13,7 +13,9 @@ public interface PlanMapper {
 
 	PlanDto getPlanWithCourse(int planId) throws SQLException;
 
-	void inviteMember(Map<String, Object> userAndPlanId) throws SQLException;
-
 	void delete(int planId) throws SQLException;
+
+	int createPlan(Map<String, Object> planAndCourse) throws SQLException;
+
+	int createCourses(Map<String, Object> planAndCourse) throws SQLException;
 }
