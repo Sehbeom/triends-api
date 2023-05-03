@@ -126,13 +126,14 @@ create table notify
 (
     notify_id int auto_increment primary key,
     user_id int,
-    content mediumtext,
-    type varchar(45),
-    isread tinyint,
-    url mediumtext
+    sender int,
+    notify_type varchar(45),
+    isread tinyint default 0,
+    additional_info varchar(255)
 );
 
 alter table notify add constraint users_notify_fk foreign key (user_id) references users(user_id) on delete cascade on update cascade;
+alter table notify add constraint users_notify_sender_fk foreign key (sender) references users(user_id) on delete cascade on update cascade;
 
 create table notice
 (
