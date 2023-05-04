@@ -122,17 +122,17 @@ create table comment
 alter table comment add constraint review_comments_fk foreign key (review_id) references review(review_id) on delete cascade on update cascade;
 alter table comment add constraint users_comment_fk foreign key (user_id) references users(user_id) on delete cascade on update cascade;
 
-create table notify
+create table notification
 (
-    notify_id int auto_increment primary key,
+    notification_id int auto_increment primary key,
     user_id int,
-    content mediumtext,
-    type varchar(45),
-    isread tinyint,
-    url mediumtext
+    sender int,
+    notification_type varchar(45),
+    additional_info varchar(255)
 );
 
-alter table notify add constraint users_notify_fk foreign key (user_id) references users(user_id) on delete cascade on update cascade;
+alter table notification add constraint users_notification_fk foreign key (user_id) references users(user_id) on delete cascade on update cascade;
+alter table notification add constraint users_notification_sender_fk foreign key (sender) references users(user_id) on delete cascade on update cascade;
 
 create table notice
 (

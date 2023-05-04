@@ -1,7 +1,14 @@
 # Created by https://www.toptal.com/developers/gitignore/api/intellij,eclipse,java
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij,eclipse,java
+<<<<<<< HEAD
 .gradle
 build
+=======
+
+.gradle
+build
+
+>>>>>>> 87bef93aa815c00366d0a9a168aff6b7f8ca7d3a
 ### Eclipse ###
 .metadata
 bin/

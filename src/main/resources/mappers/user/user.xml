@@ -14,6 +14,7 @@
 		<result column="email" property="email"/>
 		<result column="admin" property="isAdmin"/>
 	</resultMap>
+<<<<<<< HEAD
 	<resultMap id="commentDto" type="commentDto">
 		<result column="comment_id" property="commentId"/>
 		<result column="review_id" property="reviewId"/>
@@ -34,6 +35,16 @@
 	
 	<insert id="joinUser" parameterType="userDto" >
 		insert into users (id, password, name, tel, profileimg, email) values
+=======
+	
+	<select id="loginUser" parameterType="map">
+		select user_id, user_name from users
+		where id=#{userId} and password=#{password}
+	</select>
+	
+	<insert id="joinUser" parameterType="userDto" >
+		insert id, password, name, tel, profileimg, email into users values
+>>>>>>> 87bef93aa815c00366d0a9a168aff6b7f8ca7d3a
 		(#{id}, #{password}, #{name}, #{tel}, #{profileimg}, #{email})
 	</insert>
 	
@@ -42,6 +53,7 @@
 		set password=#{password}, name=#{name}, tel=#{tel}, profileimg=#{profileimg}, email=#{email}
 		where id=#{id}
 	</update>
+<<<<<<< HEAD
 
 	<select id="getComment" parameterType="int" resultMap="commentDto">
 		select comment_id, review_id, user_id, name, content from comment
@@ -62,4 +74,11 @@
 		insert into userpreference (user_id, category_id) values
 		(#{userId}, #{categoryId});
 	</insert>
+=======
+	
+	<delete id="deleteComment" parameterType="int">
+
+	</delete>
+
+>>>>>>> 87bef93aa815c00366d0a9a168aff6b7f8ca7d3a
 </mapper>
