@@ -6,7 +6,10 @@ import com.ssafy.triends.domain.user.model.UserDto;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,12 +62,12 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserDto getUser(String userId) throws Exception {
+	public UserDto getUser(int userId) throws Exception {
 		return userMapper.getUser(userId);
 	}
 
 	@Override
-	public List<CommentDto> getComment(String userId) throws Exception {
+	public List<CommentDto> getComment(int userId) throws Exception {
 		return userMapper.getComment(userId);
 	}
 
@@ -73,11 +76,10 @@ public class UserServiceImpl implements UserService{
 	 public int deleteComment(int commentId) throws Exception {
 		 return userMapper.deleteComment(commentId);
 	 }
-	 
 
 	@Override
-	public int registPreference(List<Integer> listPreference) throws Exception {
-		return userMapper.registPreference(listPreference);
+	public int registPreference(Map<String, Integer> map) throws Exception {
+		return userMapper.registPreference(map);
 	}
 
 	@Override

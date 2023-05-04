@@ -1,6 +1,8 @@
 package com.ssafy.triends.domain.user.model;
 
-public class UserDto {
+import com.ssafy.triends.global.dto.ResponseDto;
+
+public class UserDto{
 	private int userId;
 	private String id;
 	private String password;

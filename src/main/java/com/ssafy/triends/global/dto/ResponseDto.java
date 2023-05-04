@@ -1,6 +1,10 @@
 package com.ssafy.triends.global.dto;
 
+import org.springframework.boot.context.properties.ConstructorBinding;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class ResponseDto<T> {
@@ -19,4 +23,11 @@ public class ResponseDto<T> {
     public static <T> ResponseDto<T> createResponse(String message, T data) {
         return new ResponseDto<>(message, data);
     }
+
+	@Override
+	public String toString() {
+		return "ResponseDto [message=" + message + ", data=" + data + "]";
+	}
+    
+    
 }

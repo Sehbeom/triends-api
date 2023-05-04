@@ -4,30 +4,22 @@ import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.domain.user.service.UserService;
 import com.ssafy.triends.global.dto.ResponseDto;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
+import jdk.nashorn.internal.objects.Global;
+import jdk.nashorn.internal.parser.JSONParser;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.server.handler.ExceptionHandlingWebHandler;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 	private final Logger logger = LoggerFactory.getLogger(UserController.class);
 	private UserService userService;
@@ -37,50 +29,52 @@ public class UserController {
 		super();
 		this.userService = userService;
 	}
-	
-	
-	
-	@PostMapping("/user/login")
-	public ResponseEntity<?> loginUser(@RequestParam("userInfo") Map<String, String> map){
+
+	@PostMapping("/login")
+	public ResponseEntity<?> loginUser(@RequestParam Map<String, String> map, HttpSession session){
 		Map<String, String> param=new HashMap<String, String>();
+		System.out.println(map.toString());
 		param.put("userId", map.get("userId"));
 		param.put("userPwd", map.get("userPwd"));
 		try {
 			UserDto userDto=userService.loginUser(param);
+			session.setAttribute("userDto", userDto);
 			return ResponseEntity.ok(ResponseDto.createResponse("login", userDto));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
-	@PostMapping("/user/logout")
-	public ResponseEntity<?> logoutUser(HttpSession session){
+	@PostMapping("/logout")
+	public ResponseEntity<ResponseDto<?>> logoutUser(HttpSession session){
+		System.out.println("logoutSession : "+session.getAttribute("userDto"));
 		session.invalidate();
 		return ResponseEntity.ok(ResponseDto.createResponse("logout"));
 	}
 	
-	@GetMapping("/user")
-	public ResponseEntity<?> getUser(HttpSession session){
+	@GetMapping
+	public ResponseEntity<ResponseDto<?>> getUser(HttpSession session){
+		System.out.println("getUser : "+session.getAttributeNames());
 		try {
 			UserDto sessionDto=(UserDto)session.getAttribute("userDto");
-			UserDto userDto=userService.getUser((String)sessionDto.getId());
-			return ResponseEntity.ok(ResponseDto.createResponse("getUser", userDto));
+			System.out.println("sessionDto : "+sessionDto);
+			return new ResponseEntity<ResponseDto<?>>(ResponseDto.createResponse("getUser", sessionDto), HttpStatus.OK);
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
 	
-	@PostMapping("/user")
-	public ResponseEntity<?> joinUser(@RequestBody UserDto userDto){
+	@PostMapping
+	public ResponseEntity<ResponseDto<?>> joinUser(UserDto userDto){
 		try {
 			userService.joinUser(userDto);
 			List<UserDto> list=userService.userList();
-			return ResponseEntity.ok(ResponseDto.createResponse("joinUser", list));
+			return new ResponseEntity<ResponseDto<?>>(ResponseDto.createResponse("joinUser", list), HttpStatus.OK);
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
-	@PutMapping("/user")
-	public ResponseEntity<?> modifyUser(@RequestBody UserDto userDto){
+	@PutMapping
+	public ResponseEntity<?> modifyUser(UserDto userDto){
 		try {
 			userService.modifyUser(userDto);
 			List<UserDto> list=userService.userList();
@@ -90,16 +84,18 @@ public class UserController {
 		}
 	}
 	
-	@GetMapping("/user/comment")
+	@GetMapping("/comment")
 	public ResponseEntity<?> getComment(HttpSession session){
 		try {
-			List<CommentDto> list=userService.getComment((String)session.getAttribute("userId"));
+			UserDto sessionDto=(UserDto)session.getAttribute("userDto");
+			int userId=sessionDto.getUserId();
+			List<CommentDto> list=userService.getComment(userId);
 			return ResponseEntity.ok(ResponseDto.createResponse("getComment", list));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
-	@DeleteMapping("/user/comment/{commentId}")
+	@DeleteMapping("/comment/{commentId}")
 	public ResponseEntity<?> deleteComment(@PathVariable("commentId") int commentId){
 		try {
 			userService.deleteComment(commentId);
@@ -108,18 +104,31 @@ public class UserController {
 			return exceptionHandling(e);
 		}
 	}
-	@PostMapping("/user/preference")
-	public ResponseEntity<?> registPreference(@RequestBody List<Integer> listPreference, HttpSession session){
+	@PostMapping("/preference")
+	public ResponseEntity<?> registPreference(@RequestParam Map<String, Object> list, HttpSession session){
+		UserDto sessionDto=(UserDto)session.getAttribute("userDto");
+		int userId=sessionDto.getUserId();
+		System.out.println("userID : "+userId);
+		System.out.println("list ::::: "+list);
+		List<Map> prefList= (List<Map>) list.get("preferences");
+		System.out.println("registPref ::::: "+prefList);
 		try {
-			userService.registPreference(listPreference);
-			UserDto sessionDto=(UserDto)session.getAttribute("userDto");
-			List<Integer> list=userService.getPreference((int)sessionDto.getUserId());
-			return ResponseEntity.ok(ResponseDto.createResponse("registPreference", list));
+			for(Object pref:prefList){
+				System.out.println("pref ::::: "+pref);
+				int prefId=Integer.parseInt(String.valueOf(((JSONObject) pref).get("preference")));
+				System.out.println("prefID ::::: "+prefId);
+				Map<String, Integer> map=new HashMap<>();
+				map.put("userId",userId);
+				map.put("categoryId",prefId);
+				userService.registPreference(map);
+			}
+			List<Integer>pList=userService.getPreference(userId);
+			return ResponseEntity.ok(ResponseDto.createResponse("registPreference", pList));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
-	@PutMapping("/user/preference")
+	@PutMapping("/preference")
 	public ResponseEntity<?> modifyPreference(@RequestBody List<Integer> listPreference, HttpSession session){
 		try {
 			UserDto sessionDto=(UserDto)session.getAttribute("userDto");
@@ -132,8 +141,8 @@ public class UserController {
 		}
 	}
 	
-	private ResponseEntity<String> exceptionHandling(Exception e) {
+	private ResponseEntity<ResponseDto<?>> exceptionHandling(Exception e) {
 		e.printStackTrace();
-		return new ResponseEntity<String>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		return (ResponseEntity<ResponseDto<?>>) ResponseEntity.notFound();
 	}
 }
