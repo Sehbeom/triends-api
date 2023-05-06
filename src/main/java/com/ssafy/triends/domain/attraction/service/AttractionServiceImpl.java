@@ -2,52 +2,27 @@ package com.ssafy.triends.domain.attraction.service;
 
 import com.ssafy.triends.domain.attraction.mapper.AttractionMapper;
 import com.ssafy.triends.domain.attraction.model.AttractionDto;
-import org.json.simple.JSONArray;
-import org.springframework.stereotype.Service;
-
+import com.ssafy.triends.domain.attraction.model.SearchDto;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AttractionServiceImpl implements AttractionService {
-	private AttractionMapper attractionInfoMapper;
+	private AttractionMapper attractionMapper;
 	
-	public AttractionServiceImpl(AttractionMapper attractionInfoMapper) {
+	public AttractionServiceImpl(AttractionMapper attractionMapper) {
 		super();
-		this.attractionInfoMapper = attractionInfoMapper;
+		this.attractionMapper = attractionMapper;
+	}
+
+
+	@Override
+	public AttractionDto getAttractionDetail(int attractionId) throws Exception {
+		return attractionMapper.getAttractionDetail(attractionId);
 	}
 
 	@Override
-	public AttractionDto getInfo(int contentId) throws Exception {
-		return null;
+	public List<AttractionDto> searchAttractions(SearchDto searchDto) throws Exception {
+		return attractionMapper.searchAttractions(searchDto);
 	}
-
-	@Override
-	public List<AttractionDto> searchByLatLng(double swLat, double swLng, double neLat, double neLng,
-			List<Integer> types, int page) throws Exception {
-		return null;
-	}
-
-	@Override
-	public List<AttractionDto> searchByAreaCode(int area, int sigungu, List<Integer> types, int page)
-			throws Exception {
-		return null;
-	}
-
-	@Override
-	public List<AttractionDto> searchByKeyword(int area, int sigungu, String keyword, List<Integer> types, int page)
-			throws Exception {
-		return null;
-	}
-
-	@Override
-	public JSONArray sido() throws Exception {
-		return null;
-	}
-
-	@Override
-	public JSONArray gungu(int sido) throws Exception {
-		return null;
-	}
-
-	
 }
