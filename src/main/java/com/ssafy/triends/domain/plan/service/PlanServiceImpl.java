@@ -45,6 +45,11 @@ public class PlanServiceImpl implements PlanService {
 		return planMapper.createCourses(mapperParameter);
 	}
 
+	@Override
+	public int acceptMember(Map<String, Object> userAndPlanId) throws Exception {
+		return planMapper.acceptMember(userAndPlanId);
+	}
+
 	private PlanDto makePlanDtoWithBasicInfo(Map<String, Object> plan) {
 		PlanDto planDto = new PlanDto();
 		planDto.setTitle((String)plan.get("title"));

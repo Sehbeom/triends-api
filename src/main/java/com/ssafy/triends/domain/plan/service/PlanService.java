@@ -14,4 +14,6 @@ public interface PlanService {
 	void delete(int planId) throws Exception;
 
 	int createPlanAndCourses(Map<String, Object> planAndCourse) throws Exception;
+
+	int acceptMember(Map<String, Object> userAndPlanId) throws Exception;
 }

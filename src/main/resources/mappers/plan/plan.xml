@@ -106,4 +106,9 @@
             (#{plan.planId}, #{course.days}, #{course.startTime}, #{course.endTime}, #{course.contentId})
         </foreach>
     </insert>
+
+    <insert id="acceptMember" parameterType="map">
+        insert into members (plan_id, user_id)
+        values (#{planId}, #{userId})
+    </insert>
 </mapper>

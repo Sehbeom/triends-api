@@ -3,6 +3,7 @@ package com.ssafy.triends.domain.plan.controller;
 import com.ssafy.triends.domain.plan.constant.PlanResponseMessage;
 import com.ssafy.triends.domain.plan.service.PlanService;
 import com.ssafy.triends.domain.user.model.UserDto;
+import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
 import com.ssafy.triends.global.interceptor.LoginRequired;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class PlanController {
     @GetMapping("/list")
     @LoginRequired
     public ResponseEntity<ResponseDto<?>> list(HttpSession session) throws Exception {
-        UserDto user = (UserDto) session.getAttribute("userDto");
+        UserDto user = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.SEARCH_MY_PLANS_SUCCESS.getMessage(),
                         planService.getMyPlanList(user.getUserId())));
@@ -68,6 +69,24 @@ public class PlanController {
         planService.createPlanAndCourses(planAndCourse);
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.CREATE_SUCCESS.getMessage()));
+    }
+
+    @PostMapping("/member")
+    @LoginRequired
+    public ResponseEntity<ResponseDto<?>> memberAccept(@RequestBody Map<String, Object> planId, HttpSession session)
+            throws Exception {
+        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+        planId.put("userId", userDto.getUserId());
+        return ResponseEntity.ok(
+                ResponseDto.createResponse(PlanResponseMessage.ACCEPT_MEMBER_SUCCESS.getMessage(),
+                        planService.acceptMember(planId)));
+
+//      === 테스트 ===
+//        planId.put("userId", 3);
+//        return ResponseEntity.ok(
+//                ResponseDto.createResponse(PlanResponseMessage.ACCEPT_MEMBER_SUCCESS.getMessage(),
+//                        planService.acceptMember(planId)));
+//      ============
     }
 
 }

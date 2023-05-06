@@ -18,4 +18,6 @@ public interface PlanMapper {
 	int createPlan(Map<String, Object> planAndCourse) throws SQLException;
 
 	int createCourses(Map<String, Object> planAndCourse) throws SQLException;
+
+	int acceptMember(Map<String, Object> userAndPlanId) throws SQLException;
 }
