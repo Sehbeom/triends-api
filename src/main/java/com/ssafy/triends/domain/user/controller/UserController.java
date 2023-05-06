@@ -3,20 +3,27 @@ package com.ssafy.triends.domain.user.controller;
 import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.domain.user.service.UserService;
+import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
-import jdk.nashorn.internal.objects.Global;
-import jdk.nashorn.internal.parser.JSONParser;
-import org.json.simple.JSONArray;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
-import java.util.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
@@ -38,7 +45,7 @@ public class UserController {
 		param.put("userPwd", map.get("userPwd"));
 		try {
 			UserDto userDto=userService.loginUser(param);
-			session.setAttribute("userDto", userDto);
+			session.setAttribute(SessionDataName.USER_INFO.getName(), userDto);
 			return ResponseEntity.ok(ResponseDto.createResponse("login", userDto));
 		} catch (Exception e) {
 			return exceptionHandling(e);
@@ -46,7 +53,7 @@ public class UserController {
 	}
 	@PostMapping("/logout")
 	public ResponseEntity<ResponseDto<?>> logoutUser(HttpSession session){
-		System.out.println("logoutSession : "+session.getAttribute("userDto"));
+		System.out.println("logoutSession : "+session.getAttribute(SessionDataName.USER_INFO.getName()));
 		session.invalidate();
 		return ResponseEntity.ok(ResponseDto.createResponse("logout"));
 	}
@@ -55,7 +62,7 @@ public class UserController {
 	public ResponseEntity<ResponseDto<?>> getUser(HttpSession session){
 		System.out.println("getUser : "+session.getAttributeNames());
 		try {
-			UserDto sessionDto=(UserDto)session.getAttribute("userDto");
+			UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
 			System.out.println("sessionDto : "+sessionDto);
 			return new ResponseEntity<ResponseDto<?>>(ResponseDto.createResponse("getUser", sessionDto), HttpStatus.OK);
 		} catch (Exception e) {
@@ -87,7 +94,7 @@ public class UserController {
 	@GetMapping("/comment")
 	public ResponseEntity<?> getComment(HttpSession session){
 		try {
-			UserDto sessionDto=(UserDto)session.getAttribute("userDto");
+			UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
 			int userId=sessionDto.getUserId();
 			List<CommentDto> list=userService.getComment(userId);
 			return ResponseEntity.ok(ResponseDto.createResponse("getComment", list));
@@ -106,7 +113,7 @@ public class UserController {
 	}
 	@PostMapping("/preference")
 	public ResponseEntity<?> registPreference(@RequestParam Map<String, Object> list, HttpSession session){
-		UserDto sessionDto=(UserDto)session.getAttribute("userDto");
+		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
 		int userId=sessionDto.getUserId();
 		System.out.println("userID : "+userId);
 		System.out.println("list ::::: "+list);
@@ -131,7 +138,7 @@ public class UserController {
 	@PutMapping("/preference")
 	public ResponseEntity<?> modifyPreference(@RequestBody List<Integer> listPreference, HttpSession session){
 		try {
-			UserDto sessionDto=(UserDto)session.getAttribute("userDto");
+			UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
 			int userId=(int)sessionDto.getUserId();
 			userService.modifyPreference(userId, listPreference);
 			List<Integer> list=userService.getPreference(userId);
