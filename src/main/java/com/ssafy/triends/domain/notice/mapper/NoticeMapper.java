@@ -1,18 +1,15 @@
 package com.ssafy.triends.domain.notice.mapper;
 
 import com.ssafy.triends.domain.notice.model.NoticeDto;
-import org.apache.ibatis.annotations.Mapper;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.sql.SQLException;
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface NoticeMapper{
 	int register(NoticeDto noticeDto) throws SQLException;
-	JSONArray list(int page) throws SQLException;
-	JSONObject view(int noticeId) throws SQLException;
-	int modify(int noticeId, JSONObject obj) throws SQLException;
+	List<NoticeDto> list() throws SQLException;
+	NoticeDto detail(int noticeId) throws SQLException;
+	int modify(NoticeDto noticeDto) throws SQLException;
 	int delete(int noticeId) throws SQLException;
-	int total() throws SQLException;
 }

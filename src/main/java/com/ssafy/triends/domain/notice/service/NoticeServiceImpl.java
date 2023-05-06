@@ -2,11 +2,8 @@ package com.ssafy.triends.domain.notice.service;
 
 import com.ssafy.triends.domain.notice.mapper.NoticeMapper;
 import com.ssafy.triends.domain.notice.model.NoticeDto;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import java.util.List;
 import org.springframework.stereotype.Service;
-
-import java.sql.SQLException;
 
 @Service
 public class NoticeServiceImpl implements NoticeService {
@@ -18,33 +15,27 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	@Override
-	public int register(NoticeDto noticeDto) throws SQLException {
-		return 0;
+	public int register(NoticeDto noticeDto) throws Exception {
+		return noticeMapper.register(noticeDto);
 	}
 
 	@Override
-	public JSONArray list(int page) throws SQLException {
-		return null;
+	public List<NoticeDto> list() throws Exception {
+		return noticeMapper.list();
 	}
 
 	@Override
-	public JSONObject view(int noticeId) throws SQLException {
-		return null;
+	public NoticeDto detail(int noticeId) throws Exception {
+		return noticeMapper.detail(noticeId);
 	}
 
 	@Override
-	public int modify(int noticeId, JSONObject obj) throws SQLException {
-		return 0;
+	public int modify(NoticeDto noticeDto) throws Exception {
+		return noticeMapper.modify(noticeDto);
 	}
 
 	@Override
-	public int delete(int noticeId) throws SQLException {
-		return 0;
+	public int delete(int noticeId) throws Exception {
+		return noticeMapper.delete(noticeId);
 	}
-
-	@Override
-	public int total() throws SQLException {
-		return 0;
-	}
-	
 }
