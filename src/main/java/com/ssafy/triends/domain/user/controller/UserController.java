@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.ssafy.triends.domain.comment.model.CommentDto;
+import com.ssafy.triends.domain.plan.constant.PlanResponseMessage;
+import com.ssafy.triends.domain.user.constant.UserResponseMessage;
 import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.domain.user.service.UserService;
 import com.ssafy.triends.global.constant.SessionDataName;
@@ -13,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
+
+import com.ssafy.triends.global.interceptor.LoginRequired;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,25 +54,24 @@ public class UserController {
 		try {
 			UserDto userDto=userService.loginUser(param);
 			session.setAttribute(SessionDataName.USER_INFO.getName(), userDto);
-			return ResponseEntity.ok(ResponseDto.createResponse("login", userDto));
+			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.LOGIN_SUCCESS.getMessage(), userDto));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
 	@PostMapping("/logout")
+	@LoginRequired
 	public ResponseEntity<ResponseDto<?>> logoutUser(HttpSession session){
-		System.out.println("logoutSession : "+session.getAttribute(SessionDataName.USER_INFO.getName()));
 		session.invalidate();
-		return ResponseEntity.ok(ResponseDto.createResponse("logout"));
+		return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.LOGOUT_SUCCESS.getMessage()));
 	}
 	
 	@GetMapping
+	@LoginRequired
 	public ResponseEntity<ResponseDto<?>> getUser(HttpSession session){
-		System.out.println("getUser : "+session.getAttributeNames());
 		try {
 			UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
-			System.out.println("sessionDto : "+sessionDto);
-			return new ResponseEntity<ResponseDto<?>>(ResponseDto.createResponse("getUser", sessionDto), HttpStatus.OK);
+			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.GET_USER_INFO.getMessage()));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
@@ -79,43 +82,47 @@ public class UserController {
 		try {
 			userService.joinUser(userDto);
 			List<UserDto> list=userService.userList();
-			return new ResponseEntity<ResponseDto<?>>(ResponseDto.createResponse("joinUser", list), HttpStatus.OK);
+			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.JOIN_USER.getMessage(), list));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
 	@PutMapping
+	@LoginRequired
 	public ResponseEntity<?> modifyUser(UserDto userDto){
 		try {
 			userService.modifyUser(userDto);
 			List<UserDto> list=userService.userList();
-			return ResponseEntity.ok(ResponseDto.createResponse("modifyUser", list));
+			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.MODIFY_USER_INFO.getMessage(), list));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
 	
 	@GetMapping("/comment")
+	@LoginRequired
 	public ResponseEntity<?> getComment(HttpSession session){
 		try {
 			UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
 			int userId=sessionDto.getUserId();
 			List<CommentDto> list=userService.getComment(userId);
-			return ResponseEntity.ok(ResponseDto.createResponse("getComment", list));
+			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.GET_USER_COMMENT.getMessage(), list));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
 	@DeleteMapping("/comment/{commentId}")
+	@LoginRequired
 	public ResponseEntity<?> deleteComment(@PathVariable("commentId") int commentId){
 		try {
 			userService.deleteComment(commentId);
-			return ResponseEntity.ok(ResponseDto.createResponse("deleteComment", commentId));
+			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.DELETE_USER_COMMENT.getMessage(), commentId));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
 	@PostMapping("/preference")
+	@LoginRequired
 	public ResponseEntity<?> registPreference(@RequestParam("list") String str, HttpSession session){
 		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
 		int userId=sessionDto.getUserId();
@@ -132,12 +139,13 @@ public class UserController {
 				userService.registPreference(map);
 			}
 			List<Map<String, Integer>>pList=userService.getPreference(userId);
-			return ResponseEntity.ok(ResponseDto.createResponse("registPreference", pList));
+			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.REGISTER_PREFERENCE.getMessage(), pList));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
 	@PutMapping("/preference")
+	@LoginRequired
 	public ResponseEntity<?> modifyPreference(@RequestParam("list") String str, HttpSession session){
 		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
 		int userId=sessionDto.getUserId();
@@ -155,7 +163,7 @@ public class UserController {
 				userService.registPreference(map);
 			}
 			List<Map<String, Integer>>pList=userService.getPreference(userId);
-			return ResponseEntity.ok(ResponseDto.createResponse("modifyPreference", pList));
+			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.MODIFY_PREFERENCE.getMessage(), pList));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
