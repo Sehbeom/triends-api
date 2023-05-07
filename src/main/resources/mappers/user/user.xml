@@ -53,11 +53,7 @@
 		where comment_id=#{commentId};
 	</delete>
 
-<<<<<<< HEAD
 	<select id="getPreference" parameterType="int" resultType="hashmap">
-=======
-	<select id="getPreference" parameterType="int" resultType="list">
->>>>>>> 0cc7887cb64d8b389580fc26c5c270d8ce8627d8
 		select userpreference_id, user_id, category_id from userpreference
 		where user_id=#{userId};
 	</select>
@@ -67,12 +63,9 @@
 		(#{userId}, #{categoryId});
 	</insert>
 
-<<<<<<< HEAD
 	<delete id="deletePreference" parameterType="int">
 		delete from userpreference
 		where user_id=#{userId};
 	</delete>
 
-=======
->>>>>>> 0cc7887cb64d8b389580fc26c5c270d8ce8627d8
 </mapper>

@@ -25,14 +25,9 @@ public interface UserMapper {
 	List<CommentDto> getComment(int userId);
 	int deleteComment(int commentId) throws SQLException;
 	int registPreference(Map<String, Integer> map) throws SQLException;
-<<<<<<< HEAD
 	List<Map<String, Integer>> getPreference(int userId) throws SQLException;
 	int modifyPreference(int userId, List<Integer> listPreference) throws SQLException;
 	void deletePreference(int userId);
-=======
-	List<Integer> getPreference(int userId) throws SQLException;
-	int modifyPreference(int userId, List<Integer> listPreference) throws SQLException;
->>>>>>> 0cc7887cb64d8b389580fc26c5c270d8ce8627d8
 }
 
 // String id, String pw

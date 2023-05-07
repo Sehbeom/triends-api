@@ -1,12 +1,9 @@
 package com.ssafy.triends.domain.user.controller;
 
-<<<<<<< HEAD
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-=======
->>>>>>> 0cc7887cb64d8b389580fc26c5c270d8ce8627d8
 import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.domain.user.service.UserService;
@@ -119,7 +116,6 @@ public class UserController {
 		}
 	}
 	@PostMapping("/preference")
-<<<<<<< HEAD
 	public ResponseEntity<?> registPreference(@RequestParam("list") String str, HttpSession session){
 		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
 		int userId=sessionDto.getUserId();
@@ -136,33 +132,12 @@ public class UserController {
 				userService.registPreference(map);
 			}
 			List<Map<String, Integer>>pList=userService.getPreference(userId);
-=======
-	public ResponseEntity<?> registPreference(@RequestParam Map<String, Object> list, HttpSession session){
-		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
-		int userId=sessionDto.getUserId();
-		System.out.println("userID : "+userId);
-		System.out.println("list ::::: "+list);
-		List<Map> prefList= (List<Map>) list.get("preferences");
-		System.out.println("registPref ::::: "+prefList);
-		try {
-			for(Object pref:prefList){
-				System.out.println("pref ::::: "+pref);
-				int prefId=Integer.parseInt(String.valueOf(((JSONObject) pref).get("preference")));
-				System.out.println("prefID ::::: "+prefId);
-				Map<String, Integer> map=new HashMap<>();
-				map.put("userId",userId);
-				map.put("categoryId",prefId);
-				userService.registPreference(map);
-			}
-			List<Integer>pList=userService.getPreference(userId);
->>>>>>> 0cc7887cb64d8b389580fc26c5c270d8ce8627d8
 			return ResponseEntity.ok(ResponseDto.createResponse("registPreference", pList));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
 	@PutMapping("/preference")
-<<<<<<< HEAD
 	public ResponseEntity<?> modifyPreference(@RequestParam("list") String str, HttpSession session){
 		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
 		int userId=sessionDto.getUserId();
@@ -181,15 +156,6 @@ public class UserController {
 			}
 			List<Map<String, Integer>>pList=userService.getPreference(userId);
 			return ResponseEntity.ok(ResponseDto.createResponse("modifyPreference", pList));
-=======
-	public ResponseEntity<?> modifyPreference(@RequestBody List<Integer> listPreference, HttpSession session){
-		try {
-			UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
-			int userId=(int)sessionDto.getUserId();
-			userService.modifyPreference(userId, listPreference);
-			List<Integer> list=userService.getPreference(userId);
-			return ResponseEntity.ok(ResponseDto.createResponse("modifyPreference", list));
->>>>>>> 0cc7887cb64d8b389580fc26c5c270d8ce8627d8
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
