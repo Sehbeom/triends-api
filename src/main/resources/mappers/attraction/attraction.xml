@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.triends.domain.attraction.mapper.AttractionMapper">
+
+  <resultMap id="onlyAttraction" type="attractionDto">
+    <result property="contentId" column="content_id" />
+    <result property="contentTypeId" column="content_type_id" />
+    <result property="title" column="title" />
+    <result property="addr1" column="addr1" />
+    <result property="addr2" column="addr2" />
+    <result property="zipCode" column="zipcode" />
+    <result property="tel" column="tel" />
+    <result property="firstImage" column="first_image" />
+    <result property="firstImage2" column="first_image2" />
+    <result property="readCount" column="readcount" />
+    <result property="sidoCode" column="sido_code" />
+    <result property="gugunCode" column="gugun_code" />
+    <result property="latitude" column="latitude" />
+    <result property="longitude" column="longitude" />
+    <result property="mlevel" column="mlevel" />
+  </resultMap>
+
+  <select id="getAttractionDetail" resultMap="onlyAttraction" parameterType="int">
+    select
+           content_id,
+           content_type_id,
+           title,
+           addr1,
+           addr2,
+           zipcode,
+           tel,
+           first_image,
+           first_image2,
+           readcount,
+           sido_code,
+           gugun_code,
+           latitude,
+           longitude,
+           mlevel
+    from attraction_info
+    where content_id=#{contentId}
+  </select>
+
+  <select id="searchAttractions" resultMap="onlyAttraction" parameterType="searchDto">
+    select
+      content_id,
+      content_type_id,
+      title,
+      addr1,
+      addr2,
+      zipcode,
+      tel,
+      first_image,
+      first_image2,
+      readcount,
+      sido_code,
+      gugun_code,
+      latitude,
+      longitude,
+      mlevel
+    from attraction_info
+    where
+        <if test="latitude != null and longitude != null and range != null">
+        (latitude between (#{latitude} - #{range}) and (#{latitude} + #{range}))
+        and (longitude between (#{longitude} - #{range}) and (#{longitude} + #{range}))
+        </if>
+        <if test="contentTypeId != null and contentTypeId != 0">
+          and (content_type_id = #{contentTypeId})
+        </if>
+        <if test="sidoCode != null and sidoCode != 0">
+          and (sido_code = #{sidoCode})
+        </if>
+        <if test="gugunCode != null and gugunCode != 0">
+          and (gugun_code = #{gugunCode})
+        </if>
+        <if test="keyword != null">
+          and (
+                (title like concat('%', #{keyword}, '%'))
+                or (addr1 like concat('%', #{keyword}, '%'))
+                or (addr2 like concat('%', #{keyword}, '%'))
+              )
+        </if>
+    order by readcount desc
+    limit 10
+  </select>
+</mapper>
