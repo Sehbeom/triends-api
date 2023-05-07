@@ -1,10 +1,14 @@
 package com.ssafy.triends.domain.review.service;
 
+import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.review.mapper.ReviewMapper;
 import com.ssafy.triends.domain.review.model.ReviewDto;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -16,39 +20,52 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public int register(ReviewDto reviewDto) throws Exception {
-		return 0;
+	public List<ReviewDto> orderedList(int selected) throws Exception {
+		return reviewMapper.orderedList(selected);
 	}
 
 	@Override
-	public JSONArray list() throws Exception {
-		return null;
+	public ReviewDto detailReview(int reviewId) throws Exception {
+		return reviewMapper.detailReview(reviewId);
 	}
 
 	@Override
-	public JSONArray hotPlaces() throws Exception {
-		return null;
+	public int writeReview(ReviewDto reviewDto) throws Exception {
+		return reviewMapper.writeReview(reviewDto);
 	}
 
 	@Override
-	public JSONObject view(int reviewId, int userId) throws Exception {
-		return null;
+	public int registComment(CommentDto commentDto) throws Exception {
+		return reviewMapper.registComment(commentDto);
 	}
 
 	@Override
-	public int modify(int reviewId, JSONObject obj) throws Exception {
-		return 0;
+	public List<CommentDto> getComment(int reviewId) throws Exception {
+		return reviewMapper.getComment(reviewId);
 	}
 
 	@Override
-	public int updateRating(int reviewId, float score, JSONObject obj, int userId) throws Exception {
-		return 0;
+	public void likeReview(Map<String, Object> map) throws Exception {
+		reviewMapper.likeReview(map);
 	}
 
 	@Override
-	public int delete(int reviewId) throws Exception {
-		return 0;
+	public List<ReviewDto> myReview(int userId) throws Exception {
+		return reviewMapper.myReview(userId);
 	}
-	
 
+	@Override
+	public void modifyReview(ReviewDto reviewDto) throws Exception {
+		reviewMapper.modifyReview(reviewDto);
+	}
+
+	@Override
+	public ReviewDto getReview(int reviewId) throws Exception {
+		return reviewMapper.getReview(reviewId);
+	}
+
+	@Override
+	public void deleteMyReview(int reviewId) throws Exception {
+		reviewMapper.deleteMyReview(reviewId);
+	}
 }

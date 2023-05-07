@@ -4,7 +4,7 @@ public class CommentDto {
 	private int commentId;
 	private int reviewId;
 	private int userId;
-	private String registTime;
+	private String createdAt;
 	private String content;
 	private String name;
 	
@@ -26,11 +26,11 @@ public class CommentDto {
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
-	public String getRegistTime() {
-		return registTime;
+	public String getCreatedAt() {
+		return createdAt;
 	}
-	public void setRegistTime(String registTime) {
-		this.registTime = registTime;
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
 	}
 	public String getContent() {
 		return content;
@@ -48,6 +48,6 @@ public class CommentDto {
 	@Override
 	public String toString() {
 		return "CommentDto [commentId=" + commentId + ", reviewId=" + reviewId + ", userId=" + userId + ", registTime="
-				+ registTime + ", content=" + content + ", name=" + name + "]";
+				+ createdAt + ", content=" + content + ", name=" + name + "]";
 	}
 }

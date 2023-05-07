@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.triends.domain.review.mapper.ReviewMapper">
+    <resultMap id="reviewDto" type="reviewDto">
+        <result column="review_id" property="reviewId"/>
+        <result column="subject" property="subject"/>
+        <result column="plan_id" property="planId"/>
+        <result column="title" property="planTitle"/>
+        <result column="content" property="content"/>
+        <result column="user_id" property="userId"/>
+        <result column="name" property="userName"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="modified_at" property="modifiedAt"/>
+        <result column="likes" property="likes"/>
+        <result column="scrapped" property="scrapped"/>
+    </resultMap>
+    <resultMap id="commentDto" type="commentDto">
+        <result column="comment_id" property="commentId"/>
+        <result column="review_id" property="reviewId"/>
+        <result column="user_id" property="userId"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="content" property="content"/>
+        <result column="name" property="name"/>
+    </resultMap>
+    <select id="orderedList" parameterType="int" resultMap="reviewDto">
+        select r.review_id, r.subject, r.content, r.user_id, u.name, r.plan_id, p.title, r.created_at, r.modified_at, r.likes, r.scrapped
+        from review r
+        join users u on r.user_id=u.user_id
+        join plan p on r.plan_id=p.plan_id
+        <if test="order==0">
+            order by r.review_id desc;
+        </if>
+        <if test="order==1">
+            order by title
+        </if>
+        <if test="order==2">
+            order by modified_at
+        </if>
+    </select>
+    <select id="detailReview" parameterType="int" resultMap="reviewDto">
+        select r.review_id, r.subject, r.content, r.user_id, u.name, r.plan_id, p.title, r.created_at, r.modified_at, r.likes, r.scrapped
+        from review r
+        join users u on r.user_id=u.user_id
+        join plan p on r.plan_id=p.plan_id
+        where r.review_id=#{reviewId}
+    </select>
+    <insert id="writeReview" parameterType="reviewDto">
+        insert into review (subject, content, user_id, plan_id, created_at, modified_at, likes, scrapped) values
+        (#{subject}, #{content} ,#{userId}, #{planId}, now(), now(), 0, 0)
+    </insert>
+    <insert id="registComment" parameterType="commentDto">
+        insert into comment (review_id, user_id, name, content, created_at) values
+        (#{reviewId}, #{userId}, #{name}, #{content}, now())
+    </insert>
+    <select id="getComment" parameterType="int" resultMap="commentDto">
+        select c.comment_id, c.review_id, c.user_id, u.name, c.content, c.created_at
+        from comment c
+        join users u on c.user_id=u.user_id
+        where review_id=#{reviewId}
+    </select>
+    <select id="myReview" parameterType="int" resultMap="reviewDto">
+        select review_id, subject, content, user_id, plan_id, created_at, modified_at, likes, scrapped
+        from review
+        where user_id=#{userId};
+    </select>
+    <update id="modifyReview" parameterType="reviewDto">
+    </update>
+</mapper>
