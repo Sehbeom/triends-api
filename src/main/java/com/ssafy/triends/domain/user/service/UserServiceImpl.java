@@ -83,17 +83,27 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
+<<<<<<< HEAD
 	public List<Map<String, Integer>> getPreference(int userId) throws Exception {
 		return userMapper.getPreference(userId);
 	}
+=======
+	public List<Integer> getPreference(int userId) throws Exception {
+		return userMapper.getPreference(userId);
+	}
+
+>>>>>>> 0cc7887cb64d8b389580fc26c5c270d8ce8627d8
 	@Override
 	public int modifyPreference(int userId, List<Integer> listPreference) throws Exception {
 		return userMapper.modifyPreference(userId, listPreference);
 	}
 
+<<<<<<< HEAD
 	@Override
 	public void deletePreference(int userId) {
 		userMapper.deletePreference(userId);
 	}
 
+=======
+>>>>>>> 0cc7887cb64d8b389580fc26c5c270d8ce8627d8
 }

@@ -23,7 +23,12 @@ public interface UserService {
 	List<CommentDto> getComment(int userId) throws Exception;
 	int deleteComment(int commentId) throws Exception;
 	int registPreference(Map<String, Integer> map) throws Exception;
+<<<<<<< HEAD
 	List<Map<String, Integer>> getPreference(int userId) throws Exception;
 	int modifyPreference(int userId, List<Integer> listPreference) throws Exception;
 	void deletePreference(int userId);
+=======
+	List<Integer> getPreference(int userId) throws Exception;
+	int modifyPreference(int userId, List<Integer> listPreference) throws Exception;
+>>>>>>> 0cc7887cb64d8b389580fc26c5c270d8ce8627d8
 }
