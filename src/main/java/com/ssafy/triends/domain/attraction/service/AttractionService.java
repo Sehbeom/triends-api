@@ -11,7 +11,5 @@ public interface AttractionService {
 	AttractionDto getAttractionDetail(int attractionId) throws Exception;
 	List<AttractionDto> searchAttractions(SearchDto searchDto) throws Exception;
 	List<AttractionDto> getAttractionsOrderByRates() throws Exception;
-//	List<AttractionDto> getRecommendAttractions(int userId) throws Exception;
-	UserPreferenceDto getRecommendAttractions(int userId) throws Exception;
-//	List<UserPreferenceDto> getRecommendAttractions(int userId) throws Exception;
+	List<AttractionDto> getRecommendAttractions(int userId) throws Exception;
 }

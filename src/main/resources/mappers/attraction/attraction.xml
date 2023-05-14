@@ -23,7 +23,7 @@
     </resultMap>
 
     <resultMap id="attractionWithRates" type="attractionDto" extends="onlyAttraction">
-        <result property="rates" column="scoreAvg" />
+        <result property="rate" column="rate" />
     </resultMap>
 
     <resultMap id="onlyUserId" type="userPreferenceDto">
@@ -131,8 +131,41 @@
                latitude,
                longitude,
                mlevel,
-               (select avg(score) from rates r where ai.content_id = r.content_id) scoreAvg
+               (select avg(score) from rates r where ai.content_id = r.content_id) rate
         from attraction_info ai
-        order by scoreAvg desc limit 8
+        order by rate desc limit 8
     </select>
+
+  <select id="getRecommendAttractions" parameterType="list" resultMap="attractionWithRates">
+    select
+      ai.content_id,
+      ai.content_type_id,
+      ai.title,
+      ai.addr1,
+      ai.addr2,
+      ai.zipcode,
+      ai.tel,
+      ai.first_image,
+      ai.first_image2,
+      ai.readcount,
+      ai.sido_code,
+      ai.gugun_code,
+      ai.latitude,
+      ai.longitude,
+      ai.mlevel,
+      (select avg(score) from rates where content_id=ai.content_id) rate
+    from
+      attraction_info ai,
+      members m,
+      plan p,
+      course c
+    where
+      m.user_id in <foreach collection="list" open="(" close=")" separator="," item="userId">#{userId}</foreach> and
+      m.plan_id=p.plan_id and
+      c.plan_id = p.plan_id and
+      c.content_id=ai.content_id
+    group by ai.content_id
+    order by rate desc;
+  </select>
+
 </mapper>

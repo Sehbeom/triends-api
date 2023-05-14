@@ -50,11 +50,14 @@ public class AttractionController {
     public ResponseEntity<ResponseDto<?>> getRecommendAttractions(HttpSession session) throws Exception {
         UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
         if (userDto != null) {
-            return null;
+            return ResponseEntity.ok(ResponseDto.createResponse(
+                    AttractionResponseMessage.GET_ATTRACTIONS_ORDER_BY_RATES_SUCCESS.getMessage(),
+                    attractionInfoService.getRecommendAttractions(userDto.getUserId())
+            ));
         } else {
             return ResponseEntity.ok(ResponseDto.createResponse(
                     AttractionResponseMessage.GET_ATTRACTIONS_ORDER_BY_RATES_SUCCESS.getMessage(),
-                    attractionInfoService.getRecommendAttractions(1)
+                    attractionInfoService.getAttractionsOrderByRates()
             ));
         }
     }
