@@ -50,7 +50,7 @@ public class PlanController {
             throws Exception {
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.SEARCH_DETAIL_SUCCESS.getMessage(),
-                        planService.getPlanWithCourse(planId)));
+                        planService.getPlanDetail(planId)));
     }
 
     @DeleteMapping("/{planId}")
@@ -64,9 +64,9 @@ public class PlanController {
 
     @PostMapping("/create")
     @LoginRequired
-    public ResponseEntity<ResponseDto<?>> create(@RequestBody Map<String, Object> planAndCourse)
+    public ResponseEntity<ResponseDto<?>> create(@RequestBody Map<String, Object> planAndCourseInfo)
             throws Exception {
-        planService.createPlanAndCourses(planAndCourse);
+        planService.createPlan(planAndCourseInfo);
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.CREATE_SUCCESS.getMessage()));
     }

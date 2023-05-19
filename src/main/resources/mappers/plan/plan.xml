@@ -14,29 +14,45 @@
         <result property="thumbnail" column="thumbnail" />
     </resultMap>
 
-    <resultMap id="wholePlan" type="planDto" extends="onlyPlan">
-        <collection property="course" column="plan_id" javaType="list" ofType="wholeCourse" select="planCourseJoin" />
+    <resultMap id="planWithDays" type="planDto" extends="onlyPlan">
+        <collection property="days" column="plan_id" javaType="list" ofType="dayWithCourse" select="selectForPlanWithDays" />
     </resultMap>
+
+    <select id="selectForPlanWithDays" resultMap="dayWithCourse">
+        select days_id, plan_id, day_info
+        from days
+        where plan_id=#{planId}
+    </select>
+
+    <resultMap id="onlyDay" type="dayDto">
+        <result property="daysId" column="days_id" />
+        <result property="planId" column="plan_id" />
+        <result property="dayInfo" column="day_info" />
+    </resultMap>
+
+    <resultMap id="dayWithCourse" type="dayDto" extends="onlyDay">
+        <collection property="courses" column="days_id" javaType="list" ofType="courseWithAttraction" select="selectForDayWithCourse" />
+    </resultMap>
+
+    <select id="selectForDayWithCourse" resultMap="courseWithAttraction">
+        select course_id, days_id, content_id, start_time, end_time
+        from course
+        where days_id=#{daysId}
+    </select>
 
     <resultMap id="onlyCourse" type="courseDto">
         <result property="courseId" column="course_id" />
-        <result property="planId" column="plan_id" />
-        <result property="days" column="days" />
+        <result property="daysId" column="days_id" />
+        <result property="contentId" column="content_id" />
         <result property="startTime" column="start_time" />
         <result property="endTime" column="end_time" />
     </resultMap>
 
-    <resultMap id="wholeCourse" type="courseDto" extends="onlyCourse">
-        <association property="attractionDto" column="content_id" select="courseAttractionJoin" />
+    <resultMap id="courseWithAttraction" type="courseDto" extends="onlyCourse">
+        <association property="attractionDto" column="content_id" select="selectForCourseWithAttraction" />
     </resultMap>
 
-    <select id="planCourseJoin" resultMap="wholeCourse">
-        select course_id, plan_id, days, start_time, end_time, content_id
-        from course
-        where plan_id=#{planId}
-    </select>
-
-    <select id="courseAttractionJoin" resultType="attractionDto">
+    <select id="selectForCourseWithAttraction" resultType="attractionDto">
         select content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, readcount, sido_code, gugun_code, latitude, longitude, mlevel
         from attraction_info
         where content_id=#{contentId}
@@ -51,7 +67,7 @@
         order by p.plan_id desc
     </select>
 
-    <select id="getPlanWithCourse" resultMap="wholePlan" parameterType="int">
+    <select id="getPlanDetail" resultMap="planWithDays" parameterType="int">
         select plan_id, title, start_date, end_date, center_lat, center_lng, thumbnail
         from plan
         where plan_id=#{planId}
@@ -76,35 +92,45 @@
 
     <sql id="makeCenterLat">
         (select avg(latitude) from attraction_info where content_id in
-            <foreach collection="courses" item="course" index="index" open="(" close=")" separator=",">
-                #{course.contentId}
+            <foreach collection="contentIds" item="contentId" index="index" open="(" close=")" separator=",">
+                #{contentId}
             </foreach>
             )
     </sql>
 
     <sql id="makeCenterLng">
         (select avg(longitude) from attraction_info where content_id in
-        <foreach collection="courses" item="course" index="index" open="(" close=")" separator=",">
-            #{course.contentId}
+        <foreach collection="contentIds" item="contentId" index="index" open="(" close=")" separator=",">
+            #{contentId}
         </foreach>
         )
     </sql>
 
     <sql id="makeThumbnail">
         (select first_image from attraction_info where content_id in
-        <foreach collection="courses" item="course" index="index" open="(" close=")" separator=",">
-            #{course.contentId}
+        <foreach collection="contentIds" item="contentId" index="index" open="(" close=")" separator=",">
+            #{contentId}
         </foreach>
         and first_image is not null
         limit 1)
     </sql>
 
-    <insert id="createCourses" parameterType="map">
-        insert into course (plan_id, days, start_time, end_time, content_id)
+    <insert id="insertMembers" parameterType="map">
+        insert into members (plan_id, user_id)
         values
-        <foreach collection="courses" item="course" separator=",">
-            (#{plan.planId}, #{course.days}, #{course.startTime}, #{course.endTime}, #{course.contentId})
-        </foreach>
+            <foreach collection="userIds" item="userId" index="index" separator=",">
+                (#{plan.planId}, #{userId})
+            </foreach>
+    </insert>
+
+    <insert id="createDay" parameterType="dayDto" useGeneratedKeys="true" keyProperty="daysId">
+        insert into days (plan_id, day_info)
+        values (#{planId}, #{dayInfo})
+    </insert>
+
+    <insert id="createCourse" parameterType="courseDto">
+        insert into course (days_id, content_id, start_time, end_time)
+        values (#{daysId}, #{contentId}, #{startTime}, #{endTime})
     </insert>
 
     <insert id="acceptMember" parameterType="map">

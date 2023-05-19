@@ -9,11 +9,11 @@ import java.util.Map;
 public interface PlanService {
 	List<PlanDto> getMyPlanList(int userId) throws Exception;
 
-	PlanDto getPlanWithCourse(int planId) throws Exception;
+	PlanDto getPlanDetail(int planId) throws Exception;
 
 	void delete(int planId) throws Exception;
 
-	int createPlanAndCourses(Map<String, Object> planAndCourse) throws Exception;
+	void createPlan(Map<String, Object> planAndCourse) throws Exception;
 
 	int acceptMember(Map<String, Object> userAndPlanId) throws Exception;
 }
