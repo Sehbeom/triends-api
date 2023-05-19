@@ -1,5 +1,6 @@
 package com.ssafy.triends.domain.plan.service;
 
+import com.ssafy.triends.domain.plan.model.DayDto;
 import com.ssafy.triends.domain.plan.model.PlanDto;
 
 import java.sql.SQLException;
@@ -16,4 +17,6 @@ public interface PlanService {
 	void createPlan(Map<String, Object> planAndCourse) throws Exception;
 
 	int acceptMember(Map<String, Object> userAndPlanId) throws Exception;
+
+	List<DayDto> getRecommendPlans(Map<String, Object> latLngInfo) throws Exception;
 }

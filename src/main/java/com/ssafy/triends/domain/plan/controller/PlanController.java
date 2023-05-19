@@ -11,13 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/plan")
@@ -29,6 +23,14 @@ public class PlanController {
     public PlanController(PlanService planService) {
         super();
         this.planService = planService;
+    }
+
+    @GetMapping("")
+    @LoginRequired
+    public ResponseEntity<ResponseDto<?>> getRecommendPlans(@RequestParam Map<String, Object> latLngInfo) throws Exception {
+        return ResponseEntity.ok(
+                ResponseDto.createResponse(PlanResponseMessage.GET_RECOMMEND_PLANS_SUCCESS.getMessage(),
+                        planService.getRecommendPlans(latLngInfo)));
     }
 
     @GetMapping("/list")

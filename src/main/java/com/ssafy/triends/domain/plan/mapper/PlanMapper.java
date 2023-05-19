@@ -26,4 +26,6 @@ public interface PlanMapper {
 	int createCourse(CourseDto courseDto) throws SQLException;
 
 	int acceptMember(Map<String, Object> userAndPlanId) throws SQLException;
+
+	List<DayDto> getRecommendPlans(Map<String, Object> latLngInfo) throws SQLException;
 }

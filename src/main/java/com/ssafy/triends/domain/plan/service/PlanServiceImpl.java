@@ -74,6 +74,11 @@ public class PlanServiceImpl implements PlanService {
 		return planMapper.acceptMember(userAndPlanId);
 	}
 
+	@Override
+	public List<DayDto> getRecommendPlans(Map<String, Object> latLngInfo) throws Exception {
+		return planMapper.getRecommendPlans(latLngInfo);
+	}
+
 	private PlanDto makePlanDto(Map<String, Object> plan) {
 		PlanDto planDto = new PlanDto();
 		planDto.setTitle((String)plan.get("title"));

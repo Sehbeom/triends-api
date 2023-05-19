@@ -137,4 +137,18 @@
         insert into members (plan_id, user_id)
         values (#{planId}, #{userId})
     </insert>
+
+    <select id="getRecommendPlans" parameterType="map" resultMap="dayWithCourse">
+        select d.days_id, d.plan_id, d.day_info
+        from
+            days d,
+            plan p,
+            review r
+        where
+            (d.plan_id=p.plan_id) and
+            (p.center_lat between #{swLat} and #{neLat}) and
+            (p.center_lng between #{swLng} and #{neLng}) and
+            (r.plan_id=p.plan_id)
+        order by r.likes desc;
+    </select>
 </mapper>
