@@ -6,9 +6,7 @@ VALUES
 ('부산 여행', '2023-07-01', '2023-07-05', 35.1796, 129.0756, (SELECT CONCAT('https://source.unsplash.com/random/800x600?landscape,', REPLACE(title, ' ', '+')))),
 ('제주도 여행', '2023-08-01', '2023-08-05', 33.4890, 126.4983, (SELECT CONCAT('https://source.unsplash.com/random/800x600?landscape,', REPLACE(title, ' ', '+')))),
 ('강원도 여행', '2023-09-01', '2023-09-05', 37.8228, 128.1555, (SELECT CONCAT('https://source.unsplash.com/random/800x600?landscape,', REPLACE(title, ' ', '+')))),
-('경주 여행', '2023-10-01', '2023-10-05', 35.8532, 129.2249, (SELECT CONCAT('https://source.unsplash.com/random/800x600?landscape,', REPLACE(title, ' ', '+')))),
-('전주 여행', '2023-11-01', '2023-11-05', 35.8242, 127.1480, (SELECT CONCAT('https://source.unsplash.com/random/800x600?landscape,', REPLACE(title, ' ', '+')))),
-('부여 여행', '2023-12-01', '2023-12-05', 36.2768, 126.9126, (SELECT CONCAT('https://source.unsplash.com/random/800x600?landscape,', REPLACE(title, ' ', '+'))));
+('경주 여행', '2023-10-01', '2023-10-05', 35.8532, 129.2249, (SELECT CONCAT('https://source.unsplash.com/random/800x600?landscape,', REPLACE(title, ' ', '+'))));
 
 select * from plan;
 
@@ -52,42 +50,128 @@ select * from members;
 
 select * from attraction_info;
 
-INSERT INTO course(plan_id, days, start_time, end_time, content_id)
+-- 1번 plan_id에 대한 day_info 더미 데이터 생성
+INSERT INTO days (plan_id, day_info)
+SELECT 1, 1 UNION ALL
+SELECT 1, 2 UNION ALL
+SELECT 1, 3 UNION ALL
+SELECT 1, 4 UNION ALL
+SELECT 1, 5;
+
+-- 2번 plan_id에 대한 day_info 더미 데이터 생성
+INSERT INTO days (plan_id, day_info)
+SELECT 2, 1 UNION ALL
+SELECT 2, 2 UNION ALL
+SELECT 2, 3 UNION ALL
+SELECT 2, 4 UNION ALL
+SELECT 2, 5;
+
+-- 3번 plan_id에 대한 day_info 더미 데이터 생성
+INSERT INTO days (plan_id, day_info)
+SELECT 3, 1 UNION ALL
+SELECT 3, 2 UNION ALL
+SELECT 3, 3 UNION ALL
+SELECT 3, 4 UNION ALL
+SELECT 3, 5;
+
+-- 4번 plan_id에 대한 day_info 더미 데이터 생성
+INSERT INTO days (plan_id, day_info)
+SELECT 4, 1 UNION ALL
+SELECT 4, 2 UNION ALL
+SELECT 4, 3 UNION ALL
+SELECT 4, 4 UNION ALL
+SELECT 4, 5;
+
+-- 5번 plan_id에 대한 day_info 더미 데이터 생성
+INSERT INTO days (plan_id, day_info)
+SELECT 5, 1 UNION ALL
+SELECT 5, 2 UNION ALL
+SELECT 5, 3 UNION ALL
+SELECT 5, 4 UNION ALL
+SELECT 5, 5;
+
+-- 6번 plan_id에 대한 day_info 더미 데이터 생성
+INSERT INTO days (plan_id, day_info)
+SELECT 6, 1 UNION ALL
+SELECT 6, 2 UNION ALL
+SELECT 6, 3 UNION ALL
+SELECT 6, 4 UNION ALL
+SELECT 6, 5;
+
+-- 7번 plan_id에 대한 day_info 더미 데이터 생성
+INSERT INTO days (plan_id, day_info)
+SELECT 7, 1 UNION ALL
+SELECT 7, 2 UNION ALL
+SELECT 7, 3 UNION ALL
+SELECT 7, 4 UNION ALL
+SELECT 7, 5;
+
+INSERT INTO course (days_id, content_id, start_time, end_time)
 VALUES
-(1, 1, 900, 1100, 125405),
-(1, 1, 1200, 1400, 125609),
-(2, 2, 1000, 1200, 125930),
-(2, 2, 1400, 1600, 126015),
-(3, 3, 1100, 1300, 125711),
-(3, 3, 1500, 1700, 126207),
-(4, 4, 900, 1100, 125561),
-(4, 4, 1200, 1400, 125706),
-(5, 5, 1000, 1200, 126200),
-(5, 5, 1400, 1600, 126515);
+    (8, (select content_id from attraction_info order by rand() limit 1), 9, 13),
+    (8, (select content_id from attraction_info order by rand() limit 1), 14, 17),
+    (8, (select content_id from attraction_info order by rand() limit 1), 18, 21),
+    (9, (select content_id from attraction_info order by rand() limit 1), 9, 12),
+    (9, (select content_id from attraction_info order by rand() limit 1), 12, 15),
+    (10, (select content_id from attraction_info order by rand() limit 1), 10, 12),
+    (10, (select content_id from attraction_info order by rand() limit 1), 13, 16),
+    (10, (select content_id from attraction_info order by rand() limit 1), 16, 19),
+    (11, (select content_id from attraction_info order by rand() limit 1), 9, 12),
+    (12, (select content_id from attraction_info order by rand() limit 1), 10, 14);
+    
+INSERT INTO course (days_id, content_id, start_time, end_time)
+VALUES
+    (15, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 14, 17),
+    (15, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 17, 20),
+    (15, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 21, 24),
+    (16, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 12, 16),
+    (16, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 16, 19),
+    (17, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 9, 12),
+    (17, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 12, 15),
+    (18, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 12, 15),
+    (18, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 15, 18),
+    (18, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 18, 21),
+    (19, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 9, 13),
+    (19, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 13, 17);
 
-INSERT INTO course (plan_id, days, start_time, end_time, content_id) VALUES
-(3, 2, 9, 11, 135083),
-(1, 4, 12, 14, 1748100),
-(6, 3, 11, 13, 2734236),
-(2, 1, 14, 16, 2710808),
-(5, 2, 13, 15, 2855508),
-(4, 3, 10, 12, 2732402),
-(7, 1, 15, 17, 136358),
-(3, 4, 8, 10, 643038),
-(1, 3, 11, 13, 2791977),
-(6, 2, 10, 12, 1757894),
-(2, 4, 13, 15, 522298),
-(5, 1, 14, 16, 2732402),
-(4, 2, 9, 11, 1021171),
-(7, 3, 12, 14, 131824),
-(3, 1, 15, 17, 2678726),
-(1, 2, 10, 12, 130003),
-(6, 4, 13, 15, 1932641),
-(2, 3, 8, 10, 2749871),
-(5, 4, 11, 13, 134095),
-(4, 1, 12, 14, 2832553);
+-- days_id 22 이상 26 이하에 대한 더미 데이터 생성
+INSERT INTO course (days_id, content_id, start_time, end_time)
+VALUES
+    (22, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 9, 12),
+    (22, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 12, 15),
+    (23, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 10, 13),
+    (23, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 13, 16),
+    (24, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 11, 14),
+    (24, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 14, 17),
+    (25, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 12, 15),
+    (25, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 15, 18),
+    (26, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 13, 16);
 
-select * from course;
+-- days_id 29 이상 33 이하에 대한 더미 데이터 생성
+INSERT INTO course (days_id, content_id, start_time, end_time)
+VALUES
+    (29, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 9, 12),
+    (29, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 12, 15),
+    (30, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 10, 13),
+    (30, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 13, 16),
+    (31, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 11, 14),
+    (31, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 14, 17),
+    (32, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 12, 15),
+    (32, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 15, 18),
+    (33, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 13, 16);
+
+-- days_id 36 이상 40 이하에 대한 더미 데이터 생성
+INSERT INTO course (days_id, content_id, start_time, end_time)
+VALUES
+    (36, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 9, 12),
+    (36, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 12, 15),
+    (37, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 10, 13),
+    (37, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 13, 16),
+    (38, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 11, 14),
+    (38, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 14, 17),
+    (39, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 12, 15),
+    (39, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 15, 18),
+    (40, (SELECT content_id FROM attraction_info ORDER BY RAND() LIMIT 1), 13, 16);
 
 INSERT INTO notice (user_id, subject, content) VALUES
 (3, '공지사항 제목1', '공지사항 내용1'),
