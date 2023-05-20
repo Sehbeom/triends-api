@@ -3,9 +3,10 @@ package com.ssafy.triends.domain.friends.service;
 import com.ssafy.triends.domain.user.model.UserDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface FriendsService {
-	int follow(int followerId, int followeeId) throws Exception;
-	int unfollow(int followerId, int followeeId) throws Exception;
-	List<UserDto> getFollowing(int followerId) throws Exception;
+	void acceptFriend(Map<String, Object> notificationAndSenderId, int userId) throws Exception;
+	List<UserDto> getFriendsList(int userId) throws Exception;
+	void deleteFriend(int friendId, int userId) throws Exception;
 }

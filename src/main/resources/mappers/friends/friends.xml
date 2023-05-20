@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.triends.domain.friends.mapper.FriendsMapper">
+  <resultMap type="userDto" id="userDto">
+    <result column="user_id" property="userId"/>
+    <result column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="tel" property="tel"/>
+    <result column="profileimg" property="profileimg"/>
+    <result column="email" property="email"/>
+  </resultMap>
+
+  <insert id="acceptFriend" parameterType="map">
+    insert into friends (user1, user2)
+    values (#{receiverId}, #{senderId})
+  </insert>
+
+  <select id="getFriendsList" parameterType="int" resultMap="userDto">
+    select user_id, id, name, tel, profileimg, email
+    from users
+    where
+        user_id in <include refid="findFriendIds" />
+  </select>
+
+  <sql id="findFriendIds">
+    (select case
+             when user1 = #{userId} then user2
+             else user1
+             end as friend_id
+    from friends f
+    where
+      user1 = #{userId} or
+      user2 = #{userId})
+  </sql>
+
+  <delete id="deleteFriend" parameterType="map">
+    delete from friends
+    where
+        (user1=#{userId} and user2=#{friendId}) or
+        (user1=#{friendId} and user2=#{userId})
+  </delete>
+</mapper>
