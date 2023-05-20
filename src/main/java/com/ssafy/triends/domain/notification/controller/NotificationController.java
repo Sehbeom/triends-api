@@ -3,6 +3,7 @@ package com.ssafy.triends.domain.notification.controller;
 import com.ssafy.triends.domain.notification.constant.NotificationResponseMessage;
 import com.ssafy.triends.domain.notification.service.NotificationService;
 import com.ssafy.triends.domain.user.model.UserDto;
+import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
 import com.ssafy.triends.global.interceptor.LoginRequired;
 import java.util.Map;
@@ -34,15 +35,10 @@ public class NotificationController {
     @PostMapping("/plan")
     @LoginRequired
     public ResponseEntity<ResponseDto<?>> sendPlanNotification(
-            @RequestParam Map<String, String> userAndSenderAndPlanId, HttpSession session)
+            @RequestParam Map<String, Object> receiverAndPlanId, HttpSession session)
             throws Exception {
-        String userId = getUserIdForString(session);
-        userAndSenderAndPlanId.put("userId", userId);
-
-//		=== 테스트 ===
-//		userAndSenderAndPlanId.put("userId", "3");
-//		=============
-        notificationService.sendPlanMemberInvitation(userAndSenderAndPlanId);
+        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+        notificationService.sendPlanMemberInvitation(receiverAndPlanId, userDto.getUserId());
         return ResponseEntity.ok(ResponseDto.createResponse(
                 NotificationResponseMessage.CREATE_MEMBER_INVITATION_SUCCESS.getMessage()));
     }
@@ -50,16 +46,10 @@ public class NotificationController {
     @PostMapping("/friend")
     @LoginRequired
     public ResponseEntity<ResponseDto<?>> sendFriendNotification(
-            @RequestParam Map<String, String> userAndSenderId, HttpSession session)
+            @RequestParam int receiverId, HttpSession session)
             throws Exception {
-        String userId = getUserIdForString(session);
-        userAndSenderId.put("userId", userId);
-
-//		=== 테스트 ===
-//		userAndSenderId.put("userId", "3");
-//		=============
-
-        notificationService.sendFriendRequest(userAndSenderId);
+        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+        notificationService.sendFriendRequest(receiverId, userDto.getUserId());
 
         return ResponseEntity.ok(ResponseDto.createResponse(
                 NotificationResponseMessage.CREATE_FRIEND_REQUEST_SUCCESS.getMessage()));
@@ -69,14 +59,10 @@ public class NotificationController {
     @LoginRequired
     public ResponseEntity<ResponseDto<?>> getAllNotifications(HttpSession session)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute("userDto");
+        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
         return ResponseEntity.ok(ResponseDto.createResponse(
                 NotificationResponseMessage.SEARCH_NOTIFICATIONS_SUCCESS.getMessage(),
                 notificationService.getAllNotifications(userDto.getUserId())));
-
-//		=== 테스트 ===
-//		return ResponseEntity.ok(ResponseDto.createResponse("알림 목록 조회 완료", notificationService.getAllNotifications(3)));
-//		=============
     }
 
     @DeleteMapping("/{notificationId}")
@@ -88,9 +74,4 @@ public class NotificationController {
                 NotificationResponseMessage.DELETE_NOTIFICATION_SUCCESS.getMessage()));
     }
 
-
-    private String getUserIdForString(HttpSession session) {
-        UserDto userDto = (UserDto) session.getAttribute("userDto");
-        return Integer.toString(userDto.getUserId());
-    }
 }

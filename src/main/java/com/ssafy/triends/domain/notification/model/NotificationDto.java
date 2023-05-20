@@ -12,7 +12,7 @@ import lombok.Setter;
 public class NotificationDto {
 
 	private int notificationId;
-	private int userId;
+	private int receiver;
 	private int sender;
 	private String notificationType;
 	private String additionalInfo;

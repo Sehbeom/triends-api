@@ -1,5 +1,6 @@
 package com.ssafy.triends.domain.plan.service;
 
+import com.ssafy.triends.domain.notification.mapper.NotificationMapper;
 import com.ssafy.triends.domain.plan.mapper.PlanMapper;
 import com.ssafy.triends.domain.plan.model.CourseDto;
 import com.ssafy.triends.domain.plan.model.DayDto;
@@ -17,128 +18,160 @@ import java.util.stream.Collectors;
 
 @Service
 public class PlanServiceImpl implements PlanService {
-	private Logger logger = LoggerFactory.getLogger(PlanServiceImpl.class);
-	private PlanMapper planMapper;
 
-	public PlanServiceImpl(PlanMapper planMapper) {
-		super();
-		this.planMapper = planMapper;
-	}
+    private Logger logger = LoggerFactory.getLogger(PlanServiceImpl.class);
+    private PlanMapper planMapper;
+    private NotificationMapper notificationMapper;
+
+    public PlanServiceImpl(PlanMapper planMapper, NotificationMapper notificationMapper) {
+        super();
+        this.planMapper = planMapper;
+        this.notificationMapper = notificationMapper;
+    }
 
 
-	@Override
-	public List<PlanDto> getMyPlanList(int userId) throws Exception {
-		return planMapper.getMyPlanList(userId);
-	}
+    @Override
+    public List<PlanDto> getMyPlanList(int userId) throws Exception {
+        return planMapper.getMyPlanList(userId);
+    }
 
-	@Override
-	public PlanDto getPlanDetail(int planId) throws Exception {
-		return planMapper.getPlanDetail(planId);
-	}
+    @Override
+    public PlanDto getPlanDetail(int planId) throws Exception {
+        return planMapper.getPlanDetail(planId);
+    }
 
-	@Override
-	public void delete(int planId) throws Exception {
-		planMapper.delete(planId);
-	}
+    @Override
+    public void delete(int planId) throws Exception {
+        notificationMapper.deleteNotificationByPlanId(planId);
+        planMapper.delete(planId);
+    }
 
-	@Override
-	public void createPlan(Map<String, Object> planInfo) throws Exception {
-		PlanDto planDto = makePlanDto((Map<String, Object>) planInfo.get("planInfo"));
-		List<Integer> contentIds = makeContentIds((List<Map<String, Object>>) planInfo.get("courseInfo"));
-		Map<String, Object> planInsertParameter = makePlanInsertParameter(planDto, contentIds);
-		// TODO : plan 테이블 삽입
-		planMapper.createPlan(planInsertParameter);
+    @Override
+    public int createPlan(Map<String, Object> planInfo, int userId) throws Exception {
+        PlanDto planDto = makePlanDto((Map<String, Object>) planInfo.get("planInfo"));
+        List<Integer> contentIds = makeContentIds(
+                (List<Map<String, Object>>) planInfo.get("courseInfo"));
+        Map<String, Object> planInsertParameter = makePlanInsertParameter(planDto, contentIds);
+        // TODO : plan 테이블 삽입
+        planMapper.createPlan(planInsertParameter);
 
-		insertMembers(planDto, (List<String>) planInfo.get("memberInfo"));
-		insertDaysAndCourses(planDto, (List<Map<String, Object>>) planInfo.get("courseInfo"));
-	}
+        inviteMembers(planDto, (List<String>) planInfo.get("memberInfo"), userId);
+        insertDaysAndCourses(planDto, (List<Map<String, Object>>) planInfo.get("courseInfo"));
 
-	private void insertMembers(PlanDto planDto, List<String> memberInfo) throws Exception {
-		Map<String, Object> memberInsertParameter = makeMemberInsertParameter(planDto, memberInfo);
+        return planDto.getPlanId();
+    }
 
-		planMapper.insertMembers(memberInsertParameter);
-	}
+    private void inviteMembers(PlanDto planDto, List<String> memberInfo, int userId)
+            throws Exception {
+        Map<String, Object> memberInviteParameter = makeMemberInviteParameter(planDto, memberInfo,
+                userId);
+        Map<String, Object> acceptMemberParameter = makeAcceptMemberParameter(planDto.getPlanId(),
+                userId);
 
-	private Map<String, Object> makeMemberInsertParameter(PlanDto planDto, List<String> memberInfo) {
-		Map<String, Object> memberInsertParameter = new HashMap<>();
-		memberInsertParameter.put("plan", planDto);
-		memberInsertParameter.put("userIds", memberInfo.stream()
-														.map(Integer::parseInt)
-														.collect(Collectors.toList()));
+        planMapper.acceptMember(acceptMemberParameter);
+        notificationMapper.sendPlanMemberInvitations(memberInviteParameter);
+    }
 
-		return memberInsertParameter;
-	}
+    private Map<String, Object> makeMemberInviteParameter(PlanDto planDto, List<String> memberInfo,
+            int userId) {
+        Map<String, Object> memberInsertParameter = new HashMap<>();
+        memberInsertParameter.put("planId", planDto.getPlanId());
+        memberInsertParameter.put("receiverIds", memberInfo.stream()
+                .map(Integer::parseInt)
+                .collect(Collectors.toList()));
+        memberInsertParameter.put("senderId", userId);
 
-	@Override
-	public int acceptMember(Map<String, Object> userAndPlanId) throws Exception {
-		return planMapper.acceptMember(userAndPlanId);
-	}
+        return memberInsertParameter;
+    }
 
-	@Override
-	public List<DayDto> getRecommendPlans(Map<String, Object> latLngInfo) throws Exception {
-		return planMapper.getRecommendPlans(latLngInfo);
-	}
+    private Map<String, Object> makeAcceptMemberParameter(int planId, int userId) {
+        Map<String, Object> acceptMemberParameter = new HashMap<>();
+        acceptMemberParameter.put("planId", planId);
+        acceptMemberParameter.put("userId", userId);
 
-	private PlanDto makePlanDto(Map<String, Object> plan) {
-		PlanDto planDto = new PlanDto();
-		planDto.setTitle((String)plan.get("title"));
-		planDto.setStartDate((String)plan.get("startDate"));
-		planDto.setEndDate((String)plan.get("endDate"));
+        return acceptMemberParameter;
+    }
 
-		return planDto;
-	}
+    @Override
+    public void acceptMember(Map<String, Object> notificationAndPlanId, int userId)
+            throws Exception {
+        Map<String, Object> acceptMemberParameter = makeAcceptMemberParameter(
+                Integer.parseInt((String) notificationAndPlanId.get("planId")), userId);
+        planMapper.acceptMember(acceptMemberParameter);
+        notificationMapper.deleteOneNotification(
+                Integer.parseInt((String) notificationAndPlanId.get("notificationId")));
+    }
 
-	private List<Integer> makeContentIds(List<Map<String, Object>> courseInfo) {
-		List<Integer> contentIds = new ArrayList<>();
+    @Override
+    public List<DayDto> getRecommendPlans(Map<String, Object> latLngInfo) throws Exception {
+        return planMapper.getRecommendPlans(latLngInfo);
+    }
 
-		for (Map<String, Object> oneDay : courseInfo) {
-			for (Map<String, Object> oneCourse : (List<Map<String, Object>>) oneDay.get("courses")) {
-				contentIds.add(Integer.parseInt((String) oneCourse.get("contentId")));
-			}
-		}
+    private PlanDto makePlanDto(Map<String, Object> plan) {
+        PlanDto planDto = new PlanDto();
+        planDto.setTitle((String) plan.get("title"));
+        planDto.setStartDate((String) plan.get("startDate"));
+        planDto.setEndDate((String) plan.get("endDate"));
 
-		return contentIds;
-	}
+        return planDto;
+    }
 
-	private Map<String, Object> makePlanInsertParameter(PlanDto planDto, List<Integer> contentIds) {
-		Map<String, Object> planInsertParameter = new HashMap<>();
-		planInsertParameter.put("plan", planDto);
-		planInsertParameter.put("contentIds", contentIds);
+    private List<Integer> makeContentIds(List<Map<String, Object>> courseInfo) {
+        List<Integer> contentIds = new ArrayList<>();
 
-		return planInsertParameter;
-	}
+        for (Map<String, Object> oneDay : courseInfo) {
+            for (Map<String, Object> oneCourse : (List<Map<String, Object>>) oneDay.get(
+                    "courses")) {
+                contentIds.add(Integer.parseInt((String) oneCourse.get("contentId")));
+            }
+        }
 
-	private void insertDaysAndCourses(PlanDto planDto, List<Map<String, Object>> courseInfo) throws Exception {
-		for (Map<String, Object> oneDay : courseInfo) {
-			DayDto dayDto = insertDayInfoToDays(planDto, oneDay);
-			logger.debug("days Id : {}", dayDto.getDaysId());
+        return contentIds;
+    }
 
-			for (Map<String, Object> oneCourse : (List<Map<String, Object>>) oneDay.get("courses")) {
-				insertCourseInfoToCourse(dayDto, oneCourse);
-			}
-		}
-	}
+    private Map<String, Object> makePlanInsertParameter(PlanDto planDto, List<Integer> contentIds) {
+        Map<String, Object> planInsertParameter = new HashMap<>();
+        planInsertParameter.put("plan", planDto);
+        planInsertParameter.put("contentIds", contentIds);
 
-	private DayDto insertDayInfoToDays(PlanDto planDto, Map<String, Object> oneDay) throws Exception {
-		DayDto dayDto = new DayDto();
-		dayDto.setPlanId(planDto.getPlanId());
-		dayDto.setDayInfo(Integer.parseInt((String) oneDay.get("day")));
+        return planInsertParameter;
+    }
 
-		// TODO : days 테이블 삽입
-		planMapper.createDay(dayDto);
+    private void insertDaysAndCourses(PlanDto planDto, List<Map<String, Object>> courseInfo)
+            throws Exception {
+        for (Map<String, Object> oneDay : courseInfo) {
+            DayDto dayDto = insertDayInfoToDays(planDto, oneDay);
+            logger.debug("days Id : {}", dayDto.getDaysId());
 
-		return dayDto;
-	}
+            for (Map<String, Object> oneCourse : (List<Map<String, Object>>) oneDay.get(
+                    "courses")) {
+                insertCourseInfoToCourse(dayDto, oneCourse);
+            }
+        }
+    }
 
-	private void insertCourseInfoToCourse(DayDto dayDto, Map<String, Object> oneCourse) throws Exception {
-		CourseDto courseDto = new CourseDto();
-		courseDto.setDaysId(dayDto.getDaysId());
-		courseDto.setContentId(Integer.parseInt((String) oneCourse.get("contentId")));
-		courseDto.setStartTime(Integer.parseInt((String) oneCourse.get("startTime")));
-		courseDto.setEndTime(Integer.parseInt((String) oneCourse.get("endTime")));
-		// TODO : course 테이블 삽입
-		planMapper.createCourse(courseDto);
-	}
+    private DayDto insertDayInfoToDays(PlanDto planDto, Map<String, Object> oneDay)
+            throws Exception {
+        DayDto dayDto = new DayDto();
+        dayDto.setPlanId(planDto.getPlanId());
+        dayDto.setDayInfo(Integer.parseInt((String) oneDay.get("day")));
+
+        // TODO : days 테이블 삽입
+        planMapper.createDay(dayDto);
+
+        return dayDto;
+    }
+
+    private void insertCourseInfoToCourse(DayDto dayDto, Map<String, Object> oneCourse)
+            throws Exception {
+        CourseDto courseDto = new CourseDto();
+        courseDto.setDaysId(dayDto.getDaysId());
+        courseDto.setContentId(Integer.parseInt((String) oneCourse.get("contentId")));
+        courseDto.setStartTime(Integer.parseInt((String) oneCourse.get("startTime")));
+        courseDto.setEndTime(Integer.parseInt((String) oneCourse.get("endTime")));
+        // TODO : course 테이블 삽입
+        planMapper.createCourse(courseDto);
+    }
 
 
 }

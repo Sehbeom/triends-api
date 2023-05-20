@@ -115,14 +115,6 @@
         limit 1)
     </sql>
 
-    <insert id="insertMembers" parameterType="map">
-        insert into members (plan_id, user_id)
-        values
-            <foreach collection="userIds" item="userId" index="index" separator=",">
-                (#{plan.planId}, #{userId})
-            </foreach>
-    </insert>
-
     <insert id="createDay" parameterType="dayDto" useGeneratedKeys="true" keyProperty="daysId">
         insert into days (plan_id, day_info)
         values (#{planId}, #{dayInfo})

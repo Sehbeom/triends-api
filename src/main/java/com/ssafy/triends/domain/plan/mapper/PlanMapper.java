@@ -19,8 +19,6 @@ public interface PlanMapper {
 
 	int createPlan(Map<String, Object> planAndCourse) throws SQLException;
 
-	int insertMembers(Map<String, Object> planAndUserIds) throws SQLException;
-
 	int createDay(DayDto dayDto) throws SQLException;
 
 	int createCourse(CourseDto courseDto) throws SQLException;

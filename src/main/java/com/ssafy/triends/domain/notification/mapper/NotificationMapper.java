@@ -9,8 +9,10 @@ import java.util.Map;
 
 @Mapper
 public interface NotificationMapper {
-	int sendPlanMemberInvitation(Map<String, Object> userAndSenderAndPlanId) throws SQLException;
+	int sendOnePlanMemberInvitation(Map<String, Object> receiverAndSenderAndPlanId) throws SQLException;
+	int sendPlanMemberInvitations(Map<String, Object> receiversAndSenderAndPlanId) throws SQLException;
 	int sendFriendRequest(Map<String, Object> userAndSenderId) throws SQLException;
 	List<NotificationDto> getAllNotifications(int userId) throws SQLException;
 	int deleteOneNotification(int notificationId) throws SQLException;
+	int deleteNotificationByPlanId(int planId) throws SQLException;
 }

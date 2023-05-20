@@ -66,22 +66,23 @@ public class PlanController {
 
     @PostMapping("/create")
     @LoginRequired
-    public ResponseEntity<ResponseDto<?>> create(@RequestBody Map<String, Object> planAndCourseInfo)
+    public ResponseEntity<ResponseDto<?>> create(@RequestBody Map<String, Object> planAndCourseInfo, HttpSession session)
             throws Exception {
-        planService.createPlan(planAndCourseInfo);
+        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+
         return ResponseEntity.ok(
-                ResponseDto.createResponse(PlanResponseMessage.CREATE_SUCCESS.getMessage()));
+                ResponseDto.createResponse(PlanResponseMessage.CREATE_SUCCESS.getMessage(),
+                        planService.createPlan(planAndCourseInfo, userDto.getUserId())));
     }
 
     @PostMapping("/member")
     @LoginRequired
-    public ResponseEntity<ResponseDto<?>> memberAccept(@RequestBody Map<String, Object> planId, HttpSession session)
+    public ResponseEntity<ResponseDto<?>> memberAccept(@RequestBody Map<String, Object> notificationAndPlanId, HttpSession session)
             throws Exception {
         UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-        planId.put("userId", userDto.getUserId());
+        planService.acceptMember(notificationAndPlanId, userDto.getUserId());
         return ResponseEntity.ok(
-                ResponseDto.createResponse(PlanResponseMessage.ACCEPT_MEMBER_SUCCESS.getMessage(),
-                        planService.acceptMember(planId)));
+                ResponseDto.createResponse(PlanResponseMessage.ACCEPT_MEMBER_SUCCESS.getMessage()));
 
 //      === 테스트 ===
 //        planId.put("userId", 3);

@@ -21,25 +21,17 @@ public class NotificationServiceImpl implements NotificationService {
 
 
 	@Override
-	public int sendPlanMemberInvitation(Map<String, String> userAndSenderAndPlanId) throws Exception {
-		Map<String, Object> typeCastedParameter = castTypeStringToInteger(userAndSenderAndPlanId);
-		return notificationMapper.sendPlanMemberInvitation(typeCastedParameter);
+	public int sendPlanMemberInvitation(Map<String, Object> receiverAndPlanId, int senderId) throws Exception {
+		receiverAndPlanId.put("senderId", senderId);
+		return notificationMapper.sendOnePlanMemberInvitation(receiverAndPlanId);
 	}
 
 	@Override
-	public int sendFriendRequest(Map<String, String> userAndSenderId) throws Exception {
-		Map<String, Object> typeCastedParameter = castTypeStringToInteger(userAndSenderId);
-		return notificationMapper.sendFriendRequest(typeCastedParameter);
-	}
-
-	private Map<String, Object> castTypeStringToInteger(Map<String, String> parameter) {
-		Map<String, Object> typeCastedParameter = new HashMap<>();
-
-		for (Map.Entry<String, String> p : parameter.entrySet()) {
-			typeCastedParameter.put(p.getKey(), p.getValue());
-		}
-
-		return typeCastedParameter;
+	public int sendFriendRequest(int receiverId, int senderId) throws Exception {
+		Map<String, Object> receiverAndSenderId = new HashMap<>();
+		receiverAndSenderId.put("receiverId", receiverId);
+		receiverAndSenderId.put("senderId", senderId);
+		return notificationMapper.sendFriendRequest(receiverAndSenderId);
 	}
 
 	@Override
