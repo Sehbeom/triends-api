@@ -13,17 +13,17 @@
     </resultMap>
 
     <insert id="sendPlanMemberInvitation" parameterType="map">
-        insert into notification (user_id, sender, notification_type, additional_info)
+        insert into notification (receiver, sender, notification_type, additional_info)
         values (#{userId}, #{sender}, 'plan', #{planId})
     </insert>
 
     <insert id="sendFriendRequest" parameterType="map">
-        insert into notification (user_id, sender, notification_type)
+        insert into notification (receiver, sender, notification_type)
         values (#{userId}, #{sender}, 'friend')
     </insert>
 
     <select id="getAllNotifications" parameterType="int" resultMap="notificationResultMap">
-        select notification_id, user_id, sender, notification_type, additional_info
+        select notification_id, receiver, sender, notification_type, additional_info
         from notification
         where user_id=#{userId}
     </select>
