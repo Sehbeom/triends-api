@@ -115,7 +115,7 @@
         where user_id != #{userId}
     </select>
 
-    <select id="getAttractionsOrderByRates" resultMap="attractionWithRates">
+    <select id="getAttractionsOrderByRates" resultMap="attractionWithRates" parameterType="map">
         select content_id,
                content_type_id,
                title,
@@ -133,7 +133,19 @@
                mlevel,
                (select avg(score) from rates r where ai.content_id = r.content_id) rate
         from attraction_info ai
-        order by rate desc limit 8
+        <choose>
+          <when test="swLat != null and swLng != null and neLat != null and neLng != null">
+            where
+            (latitude between #{swLat} and #{neLat}) and
+            (longitude between #{swLng} and #{neLng})
+            order by rate desc
+            limit 20
+          </when>
+          <otherwise>
+            order by rate desc
+            limit 8
+          </otherwise>
+        </choose>
     </select>
 
   <select id="getRecommendAttractions" parameterType="list" resultMap="attractionWithRates">
@@ -158,11 +170,13 @@
       attraction_info ai,
       members m,
       plan p,
+      days d,
       course c
     where
       m.user_id in <foreach collection="list" open="(" close=")" separator="," item="userId">#{userId}</foreach> and
       m.plan_id=p.plan_id and
-      c.plan_id = p.plan_id and
+      p.plan_id=d.plan_id and
+      d.days_id=c.days_id and
       c.content_id=ai.content_id
     group by ai.content_id
     order by rate desc;

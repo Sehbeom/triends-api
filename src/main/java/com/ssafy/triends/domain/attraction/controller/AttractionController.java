@@ -6,12 +6,15 @@ import com.ssafy.triends.domain.attraction.service.AttractionService;
 import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
+import com.ssafy.triends.global.interceptor.LoginRequired;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
@@ -47,18 +50,22 @@ public class AttractionController {
     }
 
     @GetMapping("/recommend")
-    public ResponseEntity<ResponseDto<?>> getRecommendAttractions(HttpSession session) throws Exception {
+    @LoginRequired
+    public ResponseEntity<ResponseDto<?>> getRecommendAttractions(HttpSession session)
+            throws Exception {
         UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-        if (userDto != null) {
-            return ResponseEntity.ok(ResponseDto.createResponse(
-                    AttractionResponseMessage.GET_ATTRACTIONS_ORDER_BY_RATES_SUCCESS.getMessage(),
-                    attractionInfoService.getRecommendAttractions(userDto.getUserId())
-            ));
-        } else {
-            return ResponseEntity.ok(ResponseDto.createResponse(
-                    AttractionResponseMessage.GET_ATTRACTIONS_ORDER_BY_RATES_SUCCESS.getMessage(),
-                    attractionInfoService.getAttractionsOrderByRates()
-            ));
-        }
+        return ResponseEntity.ok(ResponseDto.createResponse(
+                AttractionResponseMessage.GET_RECOMMEND_ATTRACTIONS_SUCCESS.getMessage(),
+                attractionInfoService.getRecommendAttractions(userDto.getUserId())
+        ));
+    }
+
+    @GetMapping("/best")
+    public ResponseEntity<ResponseDto<?>> getBestAttractions(@RequestParam Map<String, Object> latLngInfo)
+            throws Exception {
+        return ResponseEntity.ok(ResponseDto.createResponse(
+                AttractionResponseMessage.GET_ATTRACTIONS_ORDER_BY_RATES_SUCCESS.getMessage(),
+                attractionInfoService.getAttractionsOrderByRates(latLngInfo)
+        ));
     }
 }

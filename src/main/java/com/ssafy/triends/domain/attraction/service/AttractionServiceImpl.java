@@ -35,8 +35,8 @@ public class AttractionServiceImpl implements AttractionService {
 	}
 
 	@Override
-	public List<AttractionDto> getAttractionsOrderByRates() throws Exception {
-		return attractionMapper.getAttractionsOrderByRates();
+	public List<AttractionDto> getAttractionsOrderByRates(Map<String, Object> latLngInfo) throws Exception {
+		return attractionMapper.getAttractionsOrderByRates(latLngInfo);
 	}
 
 	@Override
