@@ -16,6 +16,7 @@
         <result column="likes" property="likes"/>
         <result column="scrapped" property="scrapped"/>
     </resultMap>
+
     <resultMap id="commentDto" type="commentDto">
         <result column="comment_id" property="commentId"/>
         <result column="review_id" property="reviewId"/>
@@ -24,6 +25,71 @@
         <result column="content" property="content"/>
         <result column="name" property="name"/>
     </resultMap>
+
+    <resultMap id="reviewWithPlan" type="reviewDto" extends="reviewDto">
+        <association property="planInfo" column="plan_id" select="selectForReviewWithPlan" />
+    </resultMap>
+
+    <select id="selectForReviewWithPlan" resultMap="planWithDays">
+        select plan_id, title, start_date, end_date, center_lat, center_lng, thumbnail
+        from plan
+        where plan_id=#{planId}
+    </select>
+
+    <resultMap id="onlyPlan" type="planDto">
+        <result property="planId" column="plan_id" />
+        <result property="title" column="title" />
+        <result property="startDate" column="start_date" />
+        <result property="endDate" column="end_date" />
+        <result property="centerLat" column="center_lat" />
+        <result property="centerLng" column="center_lng" />
+        <result property="thumbnail" column="thumbnail" />
+    </resultMap>
+
+    <resultMap id="planWithDays" type="planDto" extends="onlyPlan">
+        <collection property="days" column="plan_id" javaType="list" ofType="dayWithCourse" select="selectForPlanWithDays" />
+    </resultMap>
+
+    <select id="selectForPlanWithDays" resultMap="dayWithCourse">
+        select days_id, plan_id, day_info
+        from days
+        where plan_id=#{planId}
+    </select>
+
+    <resultMap id="onlyDay" type="dayDto">
+        <result property="daysId" column="days_id" />
+        <result property="planId" column="plan_id" />
+        <result property="dayInfo" column="day_info" />
+    </resultMap>
+
+    <resultMap id="dayWithCourse" type="dayDto" extends="onlyDay">
+        <collection property="courses" column="days_id" javaType="list" ofType="courseWithAttraction" select="selectForDayWithCourse" />
+    </resultMap>
+
+    <select id="selectForDayWithCourse" resultMap="courseWithAttraction">
+        select course_id, days_id, content_id, start_time, end_time
+        from course
+        where days_id=#{daysId}
+    </select>
+
+    <resultMap id="onlyCourse" type="courseDto">
+        <result property="courseId" column="course_id" />
+        <result property="daysId" column="days_id" />
+        <result property="contentId" column="content_id" />
+        <result property="startTime" column="start_time" />
+        <result property="endTime" column="end_time" />
+    </resultMap>
+
+    <resultMap id="courseWithAttraction" type="courseDto" extends="onlyCourse">
+        <association property="attractionDto" column="content_id" select="selectForCourseWithAttraction" />
+    </resultMap>
+
+    <select id="selectForCourseWithAttraction" resultType="attractionDto">
+        select content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, readcount, sido_code, gugun_code, latitude, longitude, mlevel
+        from attraction_info
+        where content_id=#{contentId}
+    </select>
+
     <select id="orderedList" parameterType="int" resultMap="reviewDto">
         select r.review_id, r.subject, r.content, r.user_id, u.name, r.plan_id, p.title, r.created_at, r.modified_at, r.likes, r.scrapped
         from review r
@@ -39,32 +105,57 @@
             order by modified_at
         </if>
     </select>
-    <select id="detailReview" parameterType="int" resultMap="reviewDto">
-        select r.review_id, r.subject, r.content, r.user_id, u.name, r.plan_id, p.title, r.created_at, r.modified_at, r.likes, r.scrapped
-        from review r
-        join users u on r.user_id=u.user_id
-        join plan p on r.plan_id=p.plan_id
-        where r.review_id=#{reviewId}
+
+    <select id="detailReview" parameterType="int" resultMap="reviewWithPlan">
+        select review_id, subject, content, user_id, plan_id, created_at, modified_at, likes, scrapped
+        from review
+        where review_id=#{reviewId}
     </select>
+
     <insert id="writeReview" parameterType="reviewDto">
-        insert into review (subject, content, user_id, plan_id, created_at, modified_at, likes, scrapped) values
-        (#{subject}, #{content} ,#{userId}, #{planId}, now(), now(), 0, 0)
+        insert into review (subject, content, user_id, plan_id) values
+        (#{subject}, #{content} ,#{userId}, #{planId})
     </insert>
+
     <insert id="registComment" parameterType="commentDto">
         insert into comment (review_id, user_id, name, content, created_at) values
         (#{reviewId}, #{userId}, #{name}, #{content}, now())
     </insert>
+
     <select id="getComment" parameterType="int" resultMap="commentDto">
         select c.comment_id, c.review_id, c.user_id, u.name, c.content, c.created_at
         from comment c
         join users u on c.user_id=u.user_id
         where review_id=#{reviewId}
     </select>
-    <select id="myReview" parameterType="int" resultMap="reviewDto">
-        select review_id, subject, content, user_id, plan_id, created_at, modified_at, likes, scrapped
-        from review
-        where user_id=#{userId};
+
+    <select id="myReviews" parameterType="int" resultMap="reviewDto">
+        select r.review_id, r.subject, r.content, r.user_id, u.name, r.plan_id, p.title, r.created_at, r.modified_at, r.likes, r.scrapped
+        from review r
+            join users u on r.user_id=u.user_id
+            join plan p on r.plan_id=p.plan_id
+        where r.user_id=#{userId}
+        order by created_at desc
     </select>
+
     <update id="modifyReview" parameterType="reviewDto">
+        update review
+        set subject=#{subject}, content=#{content}
+        where review_id=#{reviewId};
+    </update>
+
+    <delete id="deleteReview" parameterType="int">
+        delete from review where review_id=#{reviewId}
+    </delete>
+
+    <insert id="insertToUserLikeReview" parameterType="map">
+        insert into user_like_review (user_id, review_id)
+        values (#{userId}, #{reviewId})
+    </insert>
+
+    <update id="increaseReviewLikes" parameterType="int">
+        update review
+        set likes = likes + 1
+        where review_id=#{reviewId}
     </update>
 </mapper>

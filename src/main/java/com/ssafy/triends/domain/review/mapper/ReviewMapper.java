@@ -12,14 +12,14 @@ import java.util.Map;
 
 @Mapper
 public interface ReviewMapper {
-	List<ReviewDto> orderedList(int selected) throws Exception;
-	ReviewDto detailReview(int reviewId) throws Exception;
-	int writeReview(ReviewDto reviewDto) throws Exception;
-	int registComment(CommentDto commentDto) throws Exception;
-	List<CommentDto> getComment(int reviewId) throws Exception;
-	void likeReview(Map<String, Object> map) throws Exception;
-	List<ReviewDto> myReview(int userId) throws Exception;
-	void modifyReview(ReviewDto reviewDto) throws Exception;
-	ReviewDto getReview(int reviewId) throws Exception;
-	void deleteMyReview(int reviewId) throws Exception;
+	List<ReviewDto> orderedList(int selected) throws SQLException;
+	ReviewDto detailReview(int reviewId) throws SQLException;
+	int writeReview(ReviewDto reviewDto) throws SQLException;
+	int registComment(CommentDto commentDto) throws SQLException;
+	List<CommentDto> getComment(int reviewId) throws SQLException;
+	void increaseReviewLikes(int reviewId) throws SQLException;
+	void insertToUserLikeReview(Map<String, Object> userAndReviewId) throws SQLException;
+	List<ReviewDto> myReviews(int userId) throws SQLException;
+	void modifyReview(ReviewDto reviewDto) throws SQLException;
+	void deleteReview(int reviewId) throws SQLException;
 }

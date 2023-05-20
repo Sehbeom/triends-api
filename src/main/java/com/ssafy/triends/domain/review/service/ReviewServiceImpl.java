@@ -3,6 +3,7 @@ package com.ssafy.triends.domain.review.service;
 import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.review.mapper.ReviewMapper;
 import com.ssafy.triends.domain.review.model.ReviewDto;
+import java.util.HashMap;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
@@ -45,13 +46,18 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public void likeReview(Map<String, Object> map) throws Exception {
-		reviewMapper.likeReview(map);
+	public void likeReview(int userId, int reviewId) throws Exception {
+		Map<String, Object> userAndReviewId = makeMapperParameter(
+				new String[] {"userId", "reviewId"},
+				new Object[] {userId, reviewId});
+
+		reviewMapper.insertToUserLikeReview(userAndReviewId);
+		reviewMapper.increaseReviewLikes(reviewId);
 	}
 
 	@Override
-	public List<ReviewDto> myReview(int userId) throws Exception {
-		return reviewMapper.myReview(userId);
+	public List<ReviewDto> myReviews(int userId) throws Exception {
+		return reviewMapper.myReviews(userId);
 	}
 
 	@Override
@@ -60,12 +66,17 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public ReviewDto getReview(int reviewId) throws Exception {
-		return reviewMapper.getReview(reviewId);
+	public void deleteReview(int reviewId) throws Exception {
+		reviewMapper.deleteReview(reviewId);
 	}
 
-	@Override
-	public void deleteMyReview(int reviewId) throws Exception {
-		reviewMapper.deleteMyReview(reviewId);
+	private Map<String, Object> makeMapperParameter(String[] names, Object[] objects) {
+		Map<String, Object> mapperParameter = new HashMap<>();
+
+		for (int i = 0; i < names.length; i++) {
+			mapperParameter.put(names[i], objects[i]);
+		}
+
+		return mapperParameter;
 	}
 }

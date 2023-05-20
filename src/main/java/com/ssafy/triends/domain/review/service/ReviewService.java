@@ -14,9 +14,8 @@ public interface ReviewService {
 	int writeReview(ReviewDto reviewDto) throws Exception;
 	int registComment(CommentDto commentDto) throws Exception;
 	List<CommentDto> getComment(int reviewId) throws Exception;
-	void likeReview(Map<String, Object> map) throws Exception;
-	List<ReviewDto> myReview(int userId) throws Exception;
+	void likeReview(int userId, int reviewId) throws Exception;
+	List<ReviewDto> myReviews(int userId) throws Exception;
 	void modifyReview(ReviewDto reviewDto) throws Exception;
-	ReviewDto getReview(int reviewId) throws Exception;
-	void deleteMyReview(int reviewId) throws Exception;
+	void deleteReview(int reviewId) throws Exception;
 }

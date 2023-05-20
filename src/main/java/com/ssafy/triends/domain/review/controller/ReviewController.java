@@ -86,11 +86,11 @@ public class ReviewController {
 	}
 	@GetMapping
 	@LoginRequired
-	public ResponseEntity<?> getMyReview(HttpSession session){
+	public ResponseEntity<?> getMyReviews(HttpSession session){
 		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
 		int userId=sessionDto.getUserId();
 		try {
-			List<ReviewDto>list = reviewService.myReview(userId);
+			List<ReviewDto>list = reviewService.myReviews(userId);
 			return ResponseEntity.ok(ResponseDto.createResponse(ReviewResponseMessage.GET_MY_REVIEW.getMessage(),list));
 		} catch (Exception e) {
 			return exceptionHandling(e);
@@ -98,16 +98,40 @@ public class ReviewController {
 	}
 	@PutMapping
 	@LoginRequired
-	public ResponseEntity<?> modifyReview(int reviewId){
+	public ResponseEntity<?> modifyReview(ReviewDto reviewDto){
 		try {
-			ReviewDto reviewDto=reviewService.detailReview(reviewId);
 			reviewService.modifyReview(reviewDto);
-			List<ReviewDto> list=reviewService.orderedList(2);
-			return ResponseEntity.ok(ResponseDto.createResponse(ReviewResponseMessage.MODIFY_REVIEW.getMessage(),list));
+			ReviewDto modifiedReview=reviewService.detailReview(reviewDto.getReviewId());
+			return ResponseEntity.ok(ResponseDto.createResponse(ReviewResponseMessage.MODIFY_REVIEW.getMessage(),modifiedReview));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
 	}
+
+	@DeleteMapping
+	@LoginRequired
+	public ResponseEntity<ResponseDto<?>> deleteReview(@RequestParam int reviewId)
+			throws Exception {
+		reviewService.deleteReview(reviewId);
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(
+						ReviewResponseMessage.DELETE_REVIEW.getMessage()
+				)
+		);
+	}
+
+	@PutMapping("/like")
+	@LoginRequired
+	public ResponseEntity<ResponseDto<?>> likeReview(@RequestParam int reviewId, HttpSession session)
+			throws Exception {
+		UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+		reviewService.likeReview(userDto.getUserId(), reviewId);
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(
+						ReviewResponseMessage.ADD_LIKE_TO_REVIEW.getMessage()
+				));
+	}
+
 
 	private ResponseEntity<ResponseDto<?>> exceptionHandling(Exception e) {
 		e.printStackTrace();
