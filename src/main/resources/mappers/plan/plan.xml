@@ -138,17 +138,15 @@
         values (#{planId}, #{userId})
     </insert>
 
-    <select id="getRecommendPlans" parameterType="map" resultMap="dayWithCourse">
-        select d.days_id, d.plan_id, d.day_info
+    <select id="getRecommendPlans" parameterType="map" resultMap="planWithDays">
+        select p.plan_id, p.title, p.start_date, p.end_date, p.center_lat, p.center_lng, p.thumbnail
         from
-            days d,
             plan p,
             review r
         where
-            (d.plan_id=p.plan_id) and
             (p.center_lat between #{swLat} and #{neLat}) and
             (p.center_lng between #{swLng} and #{neLng}) and
-            (r.plan_id=p.plan_id)
+            (p.plan_id=r.plan_id)
         order by r.likes desc;
     </select>
 </mapper>
