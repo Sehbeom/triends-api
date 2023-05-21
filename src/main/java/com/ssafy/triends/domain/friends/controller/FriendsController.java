@@ -67,4 +67,17 @@ public class FriendsController {
 				FriendsResponseMessage.DELETE_FRIEND_SUCCESS.getMessage()
 		));
 	}
+
+	@GetMapping("/recommend")
+	@LoginRequired
+	public ResponseEntity<ResponseDto<?>> getRecommendFriendsList(HttpSession session)
+			throws Exception {
+		UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(
+						FriendsResponseMessage.GET_RECOMMEND_FRIENDS_LIST_SUCCESS.getMessage(),
+						friendsService.getRecommendFriendsList(userDto.getUserId())
+				)
+		);
+	}
 }

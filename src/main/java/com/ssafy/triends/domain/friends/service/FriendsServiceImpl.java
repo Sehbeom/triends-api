@@ -47,6 +47,12 @@ public class FriendsServiceImpl implements FriendsService {
         friendsMapper.deleteFriend(deleteFriendParameter);
     }
 
+    @Override
+    public List<UserDto> getRecommendFriendsList(int userId) throws Exception {
+        List<UserDto> friendsList = friendsMapper.getFriendsList(userId);
+        return friendsMapper.getRecommendFriendsFromFriendsList(friendsList);
+    }
+
     private Map<String, Object> makeDeleteFriendParameter(int friendId, int userId) {
         Map<String, Object> deleteFriendParameter = new HashMap<>();
         deleteFriendParameter.put("friendId", friendId);

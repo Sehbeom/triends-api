@@ -9,4 +9,5 @@ public interface FriendsService {
 	void acceptFriend(Map<String, Object> notificationAndSenderId, int userId) throws Exception;
 	List<UserDto> getFriendsList(int userId) throws Exception;
 	void deleteFriend(int friendId, int userId) throws Exception;
+	List<UserDto> getRecommendFriendsList(int userId) throws Exception;
 }

@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum FriendsResponseMessage {
     ACCEPT_FRIEND_SUCCESS("친구 요청 수락이 완료되었습니다."),
     GET_FRIENDS_LIST_SUCCESS("친구 목록 조회가 완료되었습니다."),
-    DELETE_FRIEND_SUCCESS("친구 삭제가 완료되었습니다.");
+    DELETE_FRIEND_SUCCESS("친구 삭제가 완료되었습니다."),
+    GET_RECOMMEND_FRIENDS_LIST_SUCCESS("추천 친구 목록 조회가 완료되었습니다.");
 
     private final String message;
 }

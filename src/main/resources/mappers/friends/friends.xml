@@ -41,4 +41,47 @@
         (user1=#{userId} and user2=#{friendId}) or
         (user1=#{friendId} and user2=#{userId})
   </delete>
+
+  <select id="getRecommendFriendsFromFriendsList" parameterType="list" resultMap="userDto">
+    select
+        user_id, id, name, tel, profileimg, email, fc.each_count
+    from
+        users u,
+        <include refid="getFriendIdsAndCount" /> fc
+    where
+        u.user_id = fc.friend_id
+    order by fc.each_count desc;
+  </select>
+
+  <sql id="getFriendIdsAndCount">
+    (select
+        friend_id, count(friend_id) as each_count
+    from
+        <include refid="getFriendIds" /> knowtogether
+    group by friend_id)
+  </sql>
+
+  <sql id="getFriendIds">
+    (select
+            case
+                when user1 in <include refid="friendsListForeach" /> then user2
+                else user1
+            end as friend_id
+    from
+        friends
+    where
+        (user1 in <include refid="friendsListForeach" />
+        or
+        user2 in <include refid="friendsListForeach" />)
+      and
+        (user1 != 2
+        and
+        user2 != 2))
+  </sql>
+
+  <sql id="friendsListForeach">
+    <foreach collection="friendsList" item="friend" open="(" close=")" separator=",">
+      #{friend.userId}
+    </foreach>
+  </sql>
 </mapper>
