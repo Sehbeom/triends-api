@@ -6,6 +6,7 @@ import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
 import com.ssafy.triends.global.interceptor.LoginRequired;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -70,13 +71,40 @@ public class FriendsController {
 
 	@GetMapping("/recommend")
 	@LoginRequired
-	public ResponseEntity<ResponseDto<?>> getRecommendFriendsList(HttpSession session)
+	public ResponseEntity<ResponseDto<?>> getRecommendFriendsListFromFriendsList(@RequestParam String type, HttpSession session)
 			throws Exception {
 		UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+
+		if ("friends".equals(type)) {
+			List<UserDto> friendsList = friendsService.getFriendsList(userDto.getUserId());
+			if (friendsList == null || friendsList.isEmpty()) {
+				return getResponseOfSimilarityRecommendList(userDto.getUserId());
+			}
+
+			return getResponseOfFriendsRecommendList(userDto.getUserId());
+		} else if ("preference".equals(type)) {
+			return getResponseOfSimilarityRecommendList(userDto.getUserId());
+		} else {
+			return getResponseOfSimilarityRecommendList(userDto.getUserId());
+		}
+	}
+
+	private ResponseEntity<ResponseDto<?>> getResponseOfSimilarityRecommendList(int userId)
+			throws Exception {
 		return ResponseEntity.ok(
 				ResponseDto.createResponse(
 						FriendsResponseMessage.GET_RECOMMEND_FRIENDS_LIST_SUCCESS.getMessage(),
-						friendsService.getRecommendFriendsList(userDto.getUserId())
+						friendsService.getRecommendFriendsFromPreferenceSimilarity(userId)
+				)
+		);
+	}
+
+	private ResponseEntity<ResponseDto<?>> getResponseOfFriendsRecommendList(int userId)
+			throws Exception {
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(
+						FriendsResponseMessage.GET_RECOMMEND_FRIENDS_LIST_SUCCESS.getMessage(),
+						friendsService.getRecommendFriendsListFromFriendsList(userId)
 				)
 		);
 	}

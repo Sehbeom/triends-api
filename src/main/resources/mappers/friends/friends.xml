@@ -42,6 +42,23 @@
         (user1=#{friendId} and user2=#{userId})
   </delete>
 
+  <select id="getRecommendFriendsFromPreferenceSimilarity" parameterType="list" resultMap="userDto">
+    select
+    user_id, id, name, tel, profileimg, email
+    from users
+    where
+      (user_id in
+      <foreach collection="similarUserIds" item="similarUserId" open="(" close=")" separator=",">#{similarUserId}
+      </foreach>)
+    and
+    (user_id not in <include refid="findFriendIds" />)
+    order by field(user_id,
+                    <foreach collection="similarUserIds" item="similarUserId" separator=",">
+                    #{similarUserId}
+                    </foreach>)
+    limit 8;
+  </select>
+
   <select id="getRecommendFriendsFromFriendsList" parameterType="list" resultMap="userDto">
     select
         user_id, id, name, tel, profileimg, email, fc.each_count
@@ -50,7 +67,8 @@
         <include refid="getFriendIdsAndCount" /> fc
     where
         u.user_id = fc.friend_id
-    order by fc.each_count desc;
+    order by fc.each_count desc
+    limit 8;
   </select>
 
   <sql id="getFriendIdsAndCount">
@@ -58,6 +76,8 @@
         friend_id, count(friend_id) as each_count
     from
         <include refid="getFriendIds" /> knowtogether
+    where
+        friend_id not in <include refid="findFriendIds"></include>
     group by friend_id)
   </sql>
 
