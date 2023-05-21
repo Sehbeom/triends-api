@@ -3,18 +3,17 @@ package com.ssafy.triends.domain.user.service;
 import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.user.mapper.UserMapper;
 import com.ssafy.triends.domain.user.model.UserDto;
-
+import com.ssafy.triends.domain.user.model.UserPreferenceDto;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService{
 	private UserMapper userMapper;
+	private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	public UserServiceImpl(UserMapper userMapper) {
 		super();
@@ -78,18 +77,33 @@ public class UserServiceImpl implements UserService{
 	 }
 
 	@Override
-	public int registPreference(Map<String, Integer> map) throws Exception {
-		return userMapper.registPreference(map);
+	public int registPreferences(Map<String, Object> preferenceIds, int userId) throws Exception {
+		logger.debug("preferenceIds : {}", preferenceIds.get("preferenceIds"));
+		Map<String, Object> registPreferencesParameter = makeRegistPreferencesParameter(preferenceIds, userId);
+		return userMapper.registPreferences(registPreferencesParameter);
 	}
 
 	@Override
-	public List<Map<String, Integer>> getPreference(int userId) throws Exception {
-		return userMapper.getPreference(userId);
+	public int modifyPreferences(Map<String, Object> preferenceIds, int userId) throws Exception {
+		userMapper.deletePreferences(userId);
+		Map<String, Object> registPreferencesParameter = makeRegistPreferencesParameter(preferenceIds, userId);
+
+		return userMapper.registPreferences(registPreferencesParameter);
+	}
+
+	@Override
+	public UserPreferenceDto getOneUserPreferences(int userId) throws Exception {
+		return userMapper.getOneUserPreferences(userId);
 	}
 
 	@Override
 	public void deletePreference(int userId) {
-		userMapper.deletePreference(userId);
+		userMapper.deletePreferences(userId);
 	}
 
+	private Map<String, Object> makeRegistPreferencesParameter(Map<String, Object> preferenceIds, int userId) {
+		preferenceIds.put("userId", userId);
+
+		return preferenceIds;
+	}
 }

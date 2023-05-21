@@ -1,27 +1,19 @@
 package com.ssafy.triends.domain.user.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.ssafy.triends.domain.comment.model.CommentDto;
-import com.ssafy.triends.domain.plan.constant.PlanResponseMessage;
 import com.ssafy.triends.domain.user.constant.UserResponseMessage;
 import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.domain.user.service.UserService;
 import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
+import com.ssafy.triends.global.interceptor.LoginRequired;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
-
-import com.ssafy.triends.global.interceptor.LoginRequired;
-import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,6 +51,7 @@ public class UserController {
 			return exceptionHandling(e);
 		}
 	}
+
 	@PostMapping("/logout")
 	@LoginRequired
 	public ResponseEntity<ResponseDto<?>> logoutUser(HttpSession session){
@@ -87,6 +80,7 @@ public class UserController {
 			return exceptionHandling(e);
 		}
 	}
+
 	@PutMapping
 	@LoginRequired
 	public ResponseEntity<?> modifyUser(UserDto userDto){
@@ -111,6 +105,7 @@ public class UserController {
 			return exceptionHandling(e);
 		}
 	}
+
 	@DeleteMapping("/comment/{commentId}")
 	@LoginRequired
 	public ResponseEntity<?> deleteComment(@PathVariable("commentId") int commentId){
@@ -121,52 +116,61 @@ public class UserController {
 			return exceptionHandling(e);
 		}
 	}
+
+	@GetMapping("/preference")
+	@LoginRequired
+	public ResponseEntity<ResponseDto<?>> getPreferences(HttpSession session) throws Exception {
+		UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(
+						UserResponseMessage.GET_PREFERENCE.getMessage(),
+						userService.getOneUserPreferences(userDto.getUserId())
+				)
+		);
+	}
+
 	@PostMapping("/preference")
 	@LoginRequired
-	public ResponseEntity<?> registPreference(@RequestParam("list") String str, HttpSession session){
-		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
-		int userId=sessionDto.getUserId();
-		ObjectMapper objectMapper=new ObjectMapper().registerModule(new SimpleModule());
-		List<Map<String, Object>> list= null;
-		try {
-			list = objectMapper.readValue(str, new TypeReference<List<Map<String, Object>>>() {
-			});
-			for(Map pref:list){
-				System.out.println("categoryId ::::: "+pref.get("categoryId"));
-				Map<String,Integer> map=new HashMap<>();
-				map.put("userId", userId);
-				map.put("categoryId", Integer.parseInt(pref.get("categoryId").toString()));
-				userService.registPreference(map);
-			}
-			List<Map<String, Integer>>pList=userService.getPreference(userId);
-			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.REGISTER_PREFERENCE.getMessage(), pList));
-		} catch (Exception e) {
-			return exceptionHandling(e);
-		}
+	public ResponseEntity<?> registPreference(@RequestBody Map<String, Object> preferenceIds, HttpSession session)
+			throws Exception {
+		UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+		userService.registPreferences(preferenceIds, userDto.getUserId());
+
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(
+						UserResponseMessage.REGISTER_PREFERENCE.getMessage(),
+						userService.getOneUserPreferences(userDto.getUserId())
+				)
+		);
 	}
+
 	@PutMapping("/preference")
 	@LoginRequired
-	public ResponseEntity<?> modifyPreference(@RequestParam("list") String str, HttpSession session){
-		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
-		int userId=sessionDto.getUserId();
-		ObjectMapper objectMapper=new ObjectMapper().registerModule(new SimpleModule());
-		List<Map<String, Object>> list= null;
-		try {
-			userService.deletePreference(userId);
-			list = objectMapper.readValue(str, new TypeReference<List<Map<String, Object>>>() {
-			});
-			for(Map pref:list){
-				System.out.println("categoryId ::::: "+pref.get("categoryId"));
-				Map<String,Integer> map=new HashMap<>();
-				map.put("userId", userId);
-				map.put("categoryId", Integer.parseInt(pref.get("categoryId").toString()));
-				userService.registPreference(map);
-			}
-			List<Map<String, Integer>>pList=userService.getPreference(userId);
-			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.MODIFY_PREFERENCE.getMessage(), pList));
-		} catch (Exception e) {
-			return exceptionHandling(e);
-		}
+	public ResponseEntity<?> modifyPreferences(@RequestBody Map<String, Object> preferenceIds, HttpSession session)
+			throws Exception {
+		UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+		userService.modifyPreferences(preferenceIds, userDto.getUserId());
+
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(
+						UserResponseMessage.MODIFY_PREFERENCE.getMessage(),
+						userService.getOneUserPreferences(userDto.getUserId())
+				)
+		);
+	}
+
+	@DeleteMapping("/preference")
+	@LoginRequired
+	public ResponseEntity<ResponseDto<?>> deletePreferences(HttpSession session) {
+		UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+		userService.deletePreference(userDto.getUserId());
+
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(
+						UserResponseMessage.DELETE_PREFERENCE.getMessage()
+				)
+		);
 	}
 	
 	private ResponseEntity<ResponseDto<?>> exceptionHandling(Exception e) {

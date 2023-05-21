@@ -26,20 +26,6 @@
         <result property="rate" column="rate" />
     </resultMap>
 
-    <resultMap id="onlyUserId" type="userPreferenceDto">
-        <result property="userId" column="user_id" />
-    </resultMap>
-
-    <resultMap id="userPreferenceMap" type="userPreferenceDto" extends="onlyUserId">
-        <collection property="contentTypes" column="user_id" javaType="list" ofType="ContentType" select="getUserPreferencesForMap"/>
-    </resultMap>
-
-    <select id="getUserPreferencesForMap" resultType="ContentType" parameterType="int">
-        select ct.content_type_id, ct.name
-        from userpreference up, content_type ct
-        where user_id = #{userId} and up.content_type_id=ct.content_type_id
-    </select>
-
     <select id="getAttractionDetail" resultMap="onlyAttraction" parameterType="int">
         select content_id,
                content_type_id,
@@ -101,18 +87,6 @@
         </if>
         order by readcount desc
         limit 10
-    </select>
-
-    <select id="getOneUserPreferences" resultMap="userPreferenceMap" parameterType="int">
-        select user_id
-        from users
-        where user_id = #{userId}
-    </select>
-
-    <select id="getAllOtherUsersPreferences" resultMap="userPreferenceMap" parameterType="int">
-        select user_id
-        from users
-        where user_id != #{userId}
     </select>
 
     <select id="getAttractionsOrderByRates" resultMap="attractionWithRates" parameterType="map">

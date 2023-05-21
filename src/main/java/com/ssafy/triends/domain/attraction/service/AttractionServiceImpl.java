@@ -3,6 +3,7 @@ package com.ssafy.triends.domain.attraction.service;
 import com.ssafy.triends.domain.attraction.mapper.AttractionMapper;
 import com.ssafy.triends.domain.attraction.model.AttractionDto;
 import com.ssafy.triends.domain.attraction.model.SearchDto;
+import com.ssafy.triends.domain.user.mapper.UserMapper;
 import java.util.List;
 import java.util.Map;
 
@@ -16,11 +17,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class AttractionServiceImpl implements AttractionService {
 	private AttractionMapper attractionMapper;
+	private UserMapper userMapper;
 	private Logger logger = LoggerFactory.getLogger(AttractionServiceImpl.class);
 	
-	public AttractionServiceImpl(AttractionMapper attractionMapper) {
+	public AttractionServiceImpl(AttractionMapper attractionMapper, UserMapper userMapper) {
 		super();
 		this.attractionMapper = attractionMapper;
+		this.userMapper = userMapper;
 	}
 
 
@@ -41,8 +44,8 @@ public class AttractionServiceImpl implements AttractionService {
 
 	@Override
 	public List<AttractionDto> getRecommendAttractions(int userId) throws Exception {
-		UserPreferenceDto userPreferenceDto = attractionMapper.getOneUserPreferences(userId);
-		List<UserPreferenceDto> others = attractionMapper.getAllOtherUsersPreferences(userId);
+		UserPreferenceDto userPreferenceDto = userMapper.getOneUserPreferences(userId);
+		List<UserPreferenceDto> others = userMapper.getAllOtherUsersPreferences(userId);
 		logger.debug("others : {}", others);
 		Map<UserPreferenceDto, Double> similarities = PreferenceSimilarityCaculator.calculateOneWithOthers(userPreferenceDto, others);
 

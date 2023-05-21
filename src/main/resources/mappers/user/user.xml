@@ -14,6 +14,7 @@
 		<result column="email" property="email"/>
 		<result column="admin" property="isAdmin"/>
 	</resultMap>
+
 	<resultMap id="commentDto" type="commentDto">
 		<result column="comment_id" property="commentId"/>
 		<result column="review_id" property="reviewId"/>
@@ -21,6 +22,20 @@
 		<result column="content" property="content"/>
 		<result column="name" property="name"/>
 	</resultMap>
+
+	<resultMap id="onlyUserId" type="userPreferenceDto">
+		<result property="userId" column="user_id" />
+	</resultMap>
+
+	<resultMap id="userPreferenceMap" type="userPreferenceDto" extends="onlyUserId">
+		<collection property="contentTypes" column="user_id" javaType="list" ofType="ContentType" select="getUserPreferencesForMap"/>
+	</resultMap>
+
+	<select id="getUserPreferencesForMap" resultType="ContentType" parameterType="int">
+		select ct.content_type_id, ct.name
+		from userpreference up, content_type ct
+		where user_id = #{userId} and up.content_type_id=ct.content_type_id
+	</select>
 	
 	<select id="loginUser" parameterType="map" resultMap="userDto">
 		select user_id, id, password, name, tel, profileimg, email, admin from users
@@ -53,17 +68,27 @@
 		where comment_id=#{commentId};
 	</delete>
 
-	<select id="getPreference" parameterType="int" resultType="hashmap">
-		select userpreference_id, user_id, category_id from userpreference
-		where user_id=#{userId};
+	<select id="getOneUserPreferences" resultMap="userPreferenceMap" parameterType="int">
+		select user_id
+		from users
+		where user_id = #{userId}
 	</select>
 
-	<insert id="registPreference" parameterType="map">
-		insert into userpreference (user_id, category_id) values
-		(#{userId}, #{categoryId});
+	<select id="getAllOtherUsersPreferences" resultMap="userPreferenceMap" parameterType="int">
+		select user_id
+		from users
+		where user_id != #{userId}
+	</select>
+
+	<insert id="registPreferences" parameterType="map">
+		insert into userpreference (user_id, content_type_id)
+		values
+		       <foreach collection="preferenceIds" item="preferenceId" separator=",">
+						 (#{userId}, #{preferenceId})
+					 </foreach>
 	</insert>
 
-	<delete id="deletePreference" parameterType="int">
+	<delete id="deletePreferences" parameterType="int">
 		delete from userpreference
 		where user_id=#{userId};
 	</delete>
