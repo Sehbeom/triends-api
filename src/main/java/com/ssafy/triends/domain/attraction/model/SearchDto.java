@@ -12,9 +12,10 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class SearchDto {
-    private double latitude;
-    private double longitude;
-    private double range;
+    private double swLat;
+    private double swLng;
+    private double neLat;
+    private double neLng;
     private int contentTypeId;
     private int sidoCode;
     private int gugunCode;

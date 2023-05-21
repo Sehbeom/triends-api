@@ -65,10 +65,8 @@
         mlevel
         from attraction_info
         where
-        <if test="latitude != null and longitude != null and range != null">
-            (latitude between (#{latitude} - #{range}) and (#{latitude} + #{range}))
-            and (longitude between (#{longitude} - #{range}) and (#{longitude} + #{range}))
-        </if>
+            (latitude between #{swLat} and #{neLat})
+            and (longitude between #{swLng} and #{neLng})
         <if test="contentTypeId != null and contentTypeId != 0">
             and (content_type_id = #{contentTypeId})
         </if>

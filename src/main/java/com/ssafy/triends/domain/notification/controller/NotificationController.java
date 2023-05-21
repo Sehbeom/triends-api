@@ -6,6 +6,9 @@ import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
 import com.ssafy.triends.global.interceptor.LoginRequired;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -18,9 +21,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/notification")
+@Api(tags = {"알림 관리"})
 public class NotificationController {
 
     private final Logger logger = LoggerFactory.getLogger(NotificationController.class);
@@ -34,8 +39,13 @@ public class NotificationController {
 
     @PostMapping("/plan")
     @LoginRequired
+    @ApiOperation(value = "플랜 멤버 초대 전송", notes = "플랜 멤버 초대 알림을 전송한다. (로그인 필요)")
+    @ApiImplicitParam(name = "receiverAndPlanId",
+            value = "초대할 멤버(receiver)의 아이디와 플랜 아이디",
+            dataTypeClass = Map.class,
+            defaultValue = "{\"receiverId\":5,\"planId\":3}")
     public ResponseEntity<ResponseDto<?>> sendPlanNotification(
-            @RequestParam Map<String, Object> receiverAndPlanId, HttpSession session)
+            @RequestParam Map<String, Object> receiverAndPlanId, @ApiIgnore HttpSession session)
             throws Exception {
         UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
         notificationService.sendPlanMemberInvitation(receiverAndPlanId, userDto.getUserId());
@@ -45,8 +55,13 @@ public class NotificationController {
 
     @PostMapping("/friend")
     @LoginRequired
+    @ApiOperation(value = "친구 추가 요청 전송", notes = "친구 요청 알림을 전송한다. (로그인 필요)")
+    @ApiImplicitParam(name = "receiverId",
+            value = "친구 추가 요청을 보낼 사용자의 아이디",
+            dataTypeClass = Integer.class,
+            defaultValue = "5")
     public ResponseEntity<ResponseDto<?>> sendFriendNotification(
-            @RequestParam int receiverId, HttpSession session)
+            @RequestParam int receiverId, @ApiIgnore HttpSession session)
             throws Exception {
         UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
         notificationService.sendFriendRequest(receiverId, userDto.getUserId());
@@ -57,7 +72,8 @@ public class NotificationController {
 
     @GetMapping("")
     @LoginRequired
-    public ResponseEntity<ResponseDto<?>> getAllNotifications(HttpSession session)
+    @ApiOperation(value = "알림 목록 조회", notes = "현재 로그인한 사용자가 수신한 알림을 조회한다. (로그인 필요)")
+    public ResponseEntity<ResponseDto<?>> getAllNotifications(@ApiIgnore HttpSession session)
             throws Exception {
         UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
         return ResponseEntity.ok(ResponseDto.createResponse(
@@ -67,6 +83,11 @@ public class NotificationController {
 
     @DeleteMapping("/{notificationId}")
     @LoginRequired
+    @ApiOperation(value = "알림 삭제", notes = "선택한 알림을 삭제한다. (로그인 필요)")
+    @ApiImplicitParam(name = "notificationId",
+            value = "삭제할 아이디",
+            dataTypeClass = String.class,
+            defaultValue = "5")
     public ResponseEntity<ResponseDto<?>> deleteOneNotification(
             @PathVariable("notificationId") String notificationId) throws Exception {
         notificationService.deleteOneNotification(Integer.parseInt(notificationId));
