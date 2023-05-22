@@ -15,15 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -38,11 +30,12 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> loginUser(@RequestParam Map<String, String> map, HttpSession session){
+	@CrossOrigin(origins="http://localhost:8081")
+	public ResponseEntity<?> loginUser(@RequestParam Map<String, Object> map, HttpSession session){
 		Map<String, String> param=new HashMap<String, String>();
-		System.out.println(map.toString());
-		param.put("userId", map.get("userId"));
-		param.put("userPwd", map.get("userPwd"));
+		System.out.println(map);
+		param.put("userId", map.get("userId").toString());
+		param.put("userPwd", map.get("userPwd").toString());
 		try {
 			UserDto userDto=userService.loginUser(param);
 			session.setAttribute(SessionDataName.USER_INFO.getName(), userDto);
@@ -71,7 +64,9 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ResponseDto<?>> joinUser(UserDto userDto){
+	@CrossOrigin(origins="http://localhost:8081")
+	public ResponseEntity<ResponseDto<?>> joinUser( UserDto userDto){
+		System.out.println(userDto);
 		try {
 			userService.joinUser(userDto);
 			List<UserDto> list=userService.userList();
