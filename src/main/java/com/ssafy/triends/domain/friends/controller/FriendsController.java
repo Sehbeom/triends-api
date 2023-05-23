@@ -16,12 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -40,13 +35,11 @@ public class FriendsController {
     @GetMapping
     @LoginRequired
     @ApiOperation(value = "친구 목록 조회", notes = "친구 목록을 조회한다. (로그인 필요)")
-    public ResponseEntity<ResponseDto<?>> friendsList(@ApiIgnore HttpSession session) throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-
+    public ResponseEntity<ResponseDto<?>> friendsList(int userId) throws Exception {
         return ResponseEntity.ok(
                 ResponseDto.createResponse(
                         FriendsResponseMessage.GET_FRIENDS_LIST_SUCCESS.getMessage(),
-                        friendsService.getFriendsList(userDto.getUserId())
+                        friendsService.getFriendsList(userId)
                 )
         );
     }
@@ -59,10 +52,9 @@ public class FriendsController {
                     dataTypeClass = Map.class,
                     defaultValue = "{\"notificationId\":11,\"senderId\":6}")
     public ResponseEntity<ResponseDto<?>> acceptFriend(
-            @RequestParam Map<String, Object> notificationAndSenderId, @ApiIgnore HttpSession session)
+            @RequestBody Map<String, Object> notificationAndSenderAndUserId)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-        friendsService.acceptFriend(notificationAndSenderId, userDto.getUserId());
+        friendsService.acceptFriend(notificationAndSenderAndUserId);
 
         return ResponseEntity.ok(
                 ResponseDto.createResponse(
@@ -78,11 +70,9 @@ public class FriendsController {
             value = "삭제할 친구의 아이디",
             dataTypeClass = Integer.class,
             defaultValue = "6")
-    public ResponseEntity<ResponseDto<?>> deleteFriend(@RequestParam int friendId,
-            @ApiIgnore HttpSession session)
+    public ResponseEntity<ResponseDto<?>> deleteFriend(int friendId, int userId)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-        friendsService.deleteFriend(friendId, userDto.getUserId());
+        friendsService.deleteFriend(friendId, userId);
 
         return ResponseEntity.ok(ResponseDto.createResponse(
                 FriendsResponseMessage.DELETE_FRIEND_SUCCESS.getMessage()
@@ -96,22 +86,19 @@ public class FriendsController {
             value = "friends : 함께 아는 친구 추천 / preference : 취향 기반 친구 추천",
             dataTypeClass = String.class,
             defaultValue = "friends")
-    public ResponseEntity<ResponseDto<?>> getRecommendFriendsListFromFriendsList(
-            @RequestParam String type, @ApiIgnore HttpSession session)
+    public ResponseEntity<ResponseDto<?>> getRecommendFriendsListFromFriendsList(String type, int userId)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-
         if ("friends".equals(type)) {
-            List<UserDto> friendsList = friendsService.getFriendsList(userDto.getUserId());
+            List<UserDto> friendsList = friendsService.getFriendsList(userId);
             if (friendsList == null || friendsList.isEmpty()) {
-                return getResponseOfSimilarityRecommendList(userDto.getUserId());
+                return getResponseOfSimilarityRecommendList(userId);
             }
 
-            return getResponseOfFriendsRecommendList(userDto.getUserId());
+            return getResponseOfFriendsRecommendList(userId);
         } else if ("preference".equals(type)) {
-            return getResponseOfSimilarityRecommendList(userDto.getUserId());
+            return getResponseOfSimilarityRecommendList(userId);
         } else {
-            return getResponseOfSimilarityRecommendList(userDto.getUserId());
+            return getResponseOfSimilarityRecommendList(userId);
         }
     }
 

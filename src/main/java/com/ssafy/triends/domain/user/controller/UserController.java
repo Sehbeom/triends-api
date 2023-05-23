@@ -75,13 +75,10 @@ public class UserController {
 	
 	@GetMapping
 	@LoginRequired
-	public ResponseEntity<ResponseDto<?>> getUser(HttpSession session){
-		try {
-			UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
-			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.GET_USER_INFO.getMessage()));
-		} catch (Exception e) {
-			return exceptionHandling(e);
-		}
+	public ResponseEntity<ResponseDto<?>> getUser(int userId) throws Exception {
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(UserResponseMessage.GET_USER_INFO.getMessage(),
+						userService.getUser(userId)));
 	}
 	
 	@PostMapping

@@ -33,16 +33,13 @@ public class FriendsServiceImpl implements FriendsService {
 
 
     @Override
-    public void acceptFriend(Map<String, Object> notificationAndSenderId, int userId)
+    public void acceptFriend(Map<String, Object> notificationAndSenderAndUserId)
             throws Exception {
-        Map<String, Object> acceptFriendParameter = makeAcceptFriendParameter(
-                Integer.parseInt((String) notificationAndSenderId.get("senderId")),
-                userId
-        );
+        Map<String, Object> acceptFriendParameter = makeAcceptFriendParameter(notificationAndSenderAndUserId);
 
         friendsMapper.acceptFriend(acceptFriendParameter);
         notificationMapper.deleteOneNotification(
-                Integer.parseInt((String) notificationAndSenderId.get("notificationId")));
+                Integer.parseInt((String) notificationAndSenderAndUserId.get("notificationId")));
     }
 
     @Override
@@ -96,10 +93,10 @@ public class FriendsServiceImpl implements FriendsService {
         return deleteFriendParameter;
     }
 
-    private Map<String, Object> makeAcceptFriendParameter(int senderId, int userId) {
+    private Map<String, Object> makeAcceptFriendParameter(Map<String, Object> notificationAndSenderAndUserId) {
         Map<String, Object> acceptFriendParameter = new HashMap<>();
-        acceptFriendParameter.put("senderId", senderId);
-        acceptFriendParameter.put("receiverId", userId);
+        acceptFriendParameter.put("senderId", notificationAndSenderAndUserId.get("senderId"));
+        acceptFriendParameter.put("receiverId", notificationAndSenderAndUserId.get("userId"));
 
         return acceptFriendParameter;
     }

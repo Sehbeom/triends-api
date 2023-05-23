@@ -37,7 +37,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         }
 
         String accessToken = request.getHeader("access-token");
-        if (accessToken == null) {
+        if (accessToken == null || "".equals(accessToken)) {
             throw new UserInfoNotFoundException(ExceptionMessage.USERINFO_NOT_FOUND.getMessage());
         }
 

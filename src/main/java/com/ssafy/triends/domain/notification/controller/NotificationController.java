@@ -14,13 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -43,12 +37,11 @@ public class NotificationController {
     @ApiImplicitParam(name = "receiverAndPlanId",
             value = "초대할 멤버(receiver)의 아이디와 플랜 아이디",
             dataTypeClass = Map.class,
-            defaultValue = "{\"receiverId\":5,\"planId\":3}")
+            defaultValue = "{\"userId\":2,\"receiverId\":5,\"planId\":3}")
     public ResponseEntity<ResponseDto<?>> sendPlanNotification(
-            @RequestParam Map<String, Object> receiverAndPlanId, @ApiIgnore HttpSession session)
+            @RequestBody Map<String, Object> receiverAndPlanAndUserId)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-        notificationService.sendPlanMemberInvitation(receiverAndPlanId, userDto.getUserId());
+        notificationService.sendPlanMemberInvitation(receiverAndPlanAndUserId);
         return ResponseEntity.ok(ResponseDto.createResponse(
                 NotificationResponseMessage.CREATE_MEMBER_INVITATION_SUCCESS.getMessage()));
     }
@@ -60,11 +53,9 @@ public class NotificationController {
             value = "친구 추가 요청을 보낼 사용자의 아이디",
             dataTypeClass = Integer.class,
             defaultValue = "5")
-    public ResponseEntity<ResponseDto<?>> sendFriendNotification(
-            @RequestParam int receiverId, @ApiIgnore HttpSession session)
+    public ResponseEntity<ResponseDto<?>> sendFriendNotification(@RequestBody Map<String, Object> receiverAndUserId)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-        notificationService.sendFriendRequest(receiverId, userDto.getUserId());
+        notificationService.sendFriendRequest(receiverAndUserId);
 
         return ResponseEntity.ok(ResponseDto.createResponse(
                 NotificationResponseMessage.CREATE_FRIEND_REQUEST_SUCCESS.getMessage()));

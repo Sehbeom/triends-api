@@ -6,6 +6,7 @@ import com.ssafy.triends.domain.notice.service.NoticeService;
 import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
+import com.ssafy.triends.global.interceptor.LoginRequired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -15,13 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -58,51 +53,52 @@ public class NoticeController {
     }
 
     @PostMapping("")
+    @LoginRequired
     @ApiOperation(value = "공지글 작성", notes = "공지글을 작성한다.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "subject", value = "공지글 제목", dataTypeClass = String.class, defaultValue = "제목", required = true),
             @ApiImplicitParam(name = "content", value = "공지글 내용", dataTypeClass = String.class, defaultValue = "내용", required = true),
     })
-    public ResponseEntity<ResponseDto<?>> registerOneNotice(NoticeDto noticeDto,
-            @ApiIgnore HttpSession session)
+    public ResponseEntity<ResponseDto<?>> registerOneNotice(@RequestBody NoticeDto noticeDto)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-        noticeDto.setUserId(userDto.getUserId());
+        noticeService.register(noticeDto);
         return ResponseEntity.ok(
                 ResponseDto.createResponse(
                         NoticeResponseMessage.CREATE_ONE_NOTICE_SUCCESS.getMessage(),
-                        noticeService.register(noticeDto)
+                        noticeService.detail(noticeDto.getNoticeId())
                 )
         );
     }
 
     @PutMapping("")
+    @LoginRequired
     @ApiOperation(value = "공지글 수정", notes = "공지글을 수정한다.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "subject", value = "공지글 제목", dataTypeClass = String.class, defaultValue = "제목"),
             @ApiImplicitParam(name = "content", value = "공지글 내용", dataTypeClass = String.class, defaultValue = "내용"),
     })
-    public ResponseEntity<ResponseDto<?>> modifyOneNotice(NoticeDto noticeDto, @ApiIgnore HttpSession session)
+    public ResponseEntity<ResponseDto<?>> modifyOneNotice(@RequestBody NoticeDto noticeDto)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-        noticeDto.setUserId(userDto.getUserId());
+        noticeService.modify(noticeDto);
         return ResponseEntity.ok(
                 ResponseDto.createResponse(
                         NoticeResponseMessage.UPDATE_ONE_NOTICE_SUCCESS.getMessage(),
-                        noticeService.modify(noticeDto)
+                        noticeService.detail(noticeDto.getNoticeId())
                 )
         );
     }
 
     @DeleteMapping("/{noticeId}")
+    @LoginRequired
     @ApiOperation(value = "공지글 삭제", notes = "공지글을 삭제한다.")
     @ApiImplicitParam(name = "noticeId", value = "삭제할 공지글 아이디", dataTypeClass = Integer.class, defaultValue = "1")
     public ResponseEntity<ResponseDto<?>> deleteOneNotice(@PathVariable("noticeId") int noticeId)
             throws Exception {
+        noticeService.delete(noticeId);
         return ResponseEntity.ok(
                 ResponseDto.createResponse(
                         NoticeResponseMessage.DELETE_ONE_NOTICE_SUCCESS.getMessage(),
-                        noticeService.delete(noticeId)
+                        noticeService.list()
                 )
         );
     }

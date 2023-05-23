@@ -2,7 +2,6 @@ package com.ssafy.triends.domain.notification.service;
 
 import com.ssafy.triends.domain.notification.mapper.NotificationMapper;
 import com.ssafy.triends.domain.notification.model.NotificationDto;
-import org.json.simple.JSONArray;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -21,17 +20,13 @@ public class NotificationServiceImpl implements NotificationService {
 
 
 	@Override
-	public int sendPlanMemberInvitation(Map<String, Object> receiverAndPlanId, int senderId) throws Exception {
-		receiverAndPlanId.put("senderId", senderId);
-		return notificationMapper.sendOnePlanMemberInvitation(receiverAndPlanId);
+	public int sendPlanMemberInvitation(Map<String, Object> receiverAndPlanAndUserId) throws Exception {
+		return notificationMapper.sendOnePlanMemberInvitation(receiverAndPlanAndUserId);
 	}
 
 	@Override
-	public int sendFriendRequest(int receiverId, int senderId) throws Exception {
-		Map<String, Object> receiverAndSenderId = new HashMap<>();
-		receiverAndSenderId.put("receiverId", receiverId);
-		receiverAndSenderId.put("senderId", senderId);
-		return notificationMapper.sendFriendRequest(receiverAndSenderId);
+	public int sendFriendRequest(Map<String, Object> receiverAndUserId) throws Exception {
+		return notificationMapper.sendFriendRequest(receiverAndUserId);
 	}
 
 	@Override

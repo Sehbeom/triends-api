@@ -11,7 +11,7 @@
     <result property="createdAt" column="created_at" />
   </resultMap>
 
-  <insert id="register" parameterType="noticeDto">
+  <insert id="register" parameterType="noticeDto" useGeneratedKeys="true" keyProperty="noticeId">
     insert into notice (user_id, subject, content)
     values (#{userId}, #{subject}, #{content})
   </insert>

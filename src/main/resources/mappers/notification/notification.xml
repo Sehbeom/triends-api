@@ -14,7 +14,7 @@
 
     <insert id="sendOnePlanMemberInvitation" parameterType="map">
         insert into notification (receiver, sender, notification_type, additional_info)
-        values (#{receiverId}, #{senderId}, 'plan', #{planId})
+        values (#{receiverId}, #{userId}, 'plan', #{planId})
     </insert>
 
     <insert id="sendPlanMemberInvitations" parameterType="map">
@@ -27,14 +27,8 @@
 
     <insert id="sendFriendRequest" parameterType="map">
         insert into notification (receiver, sender, notification_type)
-        values (#{receiverId}, #{senderId}, 'friend')
+        values (#{receiverId}, #{userId}, 'friend')
     </insert>
-
-<!--    <select id="getAllNotifications" parameterType="int" resultMap="notificationResultMap">-->
-<!--        select notification_id, receiver, sender, notification_type, additional_info-->
-<!--        from notification-->
-<!--        where receiver=#{userId}-->
-<!--    </select>-->
 
     <select id="getAllNotifications" parameterType="int" resultMap="notificationResultMap">
         (select n.notification_id, n.receiver, n.sender, n.notification_type, u.name as additional_info
