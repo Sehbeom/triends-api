@@ -16,7 +16,7 @@ public interface PlanService {
 
 	int createPlan(Map<String, Object> planAndCourse, int userId) throws Exception;
 
-	void acceptMember(Map<String, Object> notificationAndPlanId, int userId) throws Exception;
+	void acceptMember(Map<String, Object> userAndNotificationAndPlanId) throws Exception;
 
 	List<DayDto> getRecommendPlans(Map<String, Object> latLngInfo) throws Exception;
 }

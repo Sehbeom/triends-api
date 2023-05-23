@@ -64,24 +64,22 @@ public class NotificationController {
     @GetMapping("")
     @LoginRequired
     @ApiOperation(value = "알림 목록 조회", notes = "현재 로그인한 사용자가 수신한 알림을 조회한다. (로그인 필요)")
-    public ResponseEntity<ResponseDto<?>> getAllNotifications(@ApiIgnore HttpSession session)
+    public ResponseEntity<ResponseDto<?>> getAllNotifications(int userId)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
         return ResponseEntity.ok(ResponseDto.createResponse(
                 NotificationResponseMessage.SEARCH_NOTIFICATIONS_SUCCESS.getMessage(),
-                notificationService.getAllNotifications(userDto.getUserId())));
+                notificationService.getAllNotifications(userId)));
     }
 
-    @DeleteMapping("/{notificationId}")
+    @DeleteMapping("")
     @LoginRequired
     @ApiOperation(value = "알림 삭제", notes = "선택한 알림을 삭제한다. (로그인 필요)")
     @ApiImplicitParam(name = "notificationId",
             value = "삭제할 아이디",
             dataTypeClass = String.class,
             defaultValue = "5")
-    public ResponseEntity<ResponseDto<?>> deleteOneNotification(
-            @PathVariable("notificationId") String notificationId) throws Exception {
-        notificationService.deleteOneNotification(Integer.parseInt(notificationId));
+    public ResponseEntity<ResponseDto<?>> deleteOneNotification(int notificationId) throws Exception {
+        notificationService.deleteOneNotification(notificationId);
         return ResponseEntity.ok(ResponseDto.createResponse(
                 NotificationResponseMessage.DELETE_NOTIFICATION_SUCCESS.getMessage()));
     }

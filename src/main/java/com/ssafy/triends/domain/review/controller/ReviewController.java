@@ -72,12 +72,8 @@ public class ReviewController {
 			@ApiImplicitParam(name = "content", value = "내용", dataTypeClass = String.class, defaultValue = "내용", required = true),
 			@ApiImplicitParam(name = "planId", value = "플랜 아이디", dataTypeClass = Integer.class, defaultValue = "1", required = true),
 	})
-	public ResponseEntity<?> writeReview(ReviewDto reviewDto, @ApiIgnore HttpSession session){
-		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
-		int userId=sessionDto.getUserId();
+	public ResponseEntity<?> writeReview(@RequestBody ReviewDto reviewDto){
 		try {
-			reviewDto.setUserId(userId);
-			System.out.println(reviewDto);
 			reviewService.writeReview(reviewDto);
 			List<ReviewDto> list=reviewService.orderedList(0);
 			return ResponseEntity.ok(ResponseDto.createResponse(ReviewResponseMessage.REGIST_REVIEW.getMessage(),list));
@@ -93,12 +89,7 @@ public class ReviewController {
 			@ApiImplicitParam(name = "reviewId", value = "리뷰 아이디", dataTypeClass = Integer.class, defaultValue = "1", required = true),
 			@ApiImplicitParam(name = "content", value = "내용", dataTypeClass = String.class, defaultValue = "내용", required = true),
 	})
-	public ResponseEntity<?> registComment(CommentDto commentDto, @ApiIgnore HttpSession session){
-		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
-		int userId=sessionDto.getUserId();
-		String name=sessionDto.getName();
-		commentDto.setUserId(userId);
-		commentDto.setName(name);
+	public ResponseEntity<?> registComment(@RequestBody CommentDto commentDto){
 		try {
 			reviewService.registComment(commentDto);
 			int reviewId=commentDto.getReviewId();
@@ -111,9 +102,7 @@ public class ReviewController {
 	@GetMapping
 	@LoginRequired
 	@ApiOperation(value = "내가 쓴 리뷰 목록 조회", notes = "내가 쓴 리뷰 목록 조회 (로그인 필요)")
-	public ResponseEntity<?> getMyReviews(@ApiIgnore HttpSession session){
-		UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
-		int userId=sessionDto.getUserId();
+	public ResponseEntity<?> getMyReviews(int userId){
 		try {
 			List<ReviewDto>list = reviewService.myReviews(userId);
 			return ResponseEntity.ok(ResponseDto.createResponse(ReviewResponseMessage.GET_MY_REVIEW.getMessage(),list));
@@ -128,11 +117,12 @@ public class ReviewController {
 			@ApiImplicitParam(name = "subject", value = "제목", dataTypeClass = String.class, defaultValue = "제목", required = true),
 			@ApiImplicitParam(name = "content", value = "내용", dataTypeClass = String.class, defaultValue = "내용", required = true),
 	})
-	public ResponseEntity<?> modifyReview(ReviewDto reviewDto){
+	public ResponseEntity<?> modifyReview(@RequestBody ReviewDto reviewDto){
 		try {
 			reviewService.modifyReview(reviewDto);
-			ReviewDto modifiedReview=reviewService.detailReview(reviewDto.getReviewId());
-			return ResponseEntity.ok(ResponseDto.createResponse(ReviewResponseMessage.MODIFY_REVIEW.getMessage(),modifiedReview));
+			return ResponseEntity.ok(
+					ResponseDto.createResponse(ReviewResponseMessage.MODIFY_REVIEW.getMessage(),
+							reviewService.detailReview(reviewDto.getReviewId())));
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
@@ -142,7 +132,7 @@ public class ReviewController {
 	@LoginRequired
 	@ApiOperation(value = "리뷰 삭제", notes = "리뷰 삭제 (로그인 필요)")
 	@ApiImplicitParam(name = "reviewId", value = "삭제할 리뷰 아이디", dataTypeClass = Integer.class, defaultValue = "1", required = true)
-	public ResponseEntity<ResponseDto<?>> deleteReview(@RequestParam int reviewId)
+	public ResponseEntity<ResponseDto<?>> deleteReview(int reviewId)
 			throws Exception {
 		reviewService.deleteReview(reviewId);
 		return ResponseEntity.ok(
@@ -156,10 +146,9 @@ public class ReviewController {
 	@LoginRequired
 	@ApiOperation(value = "리뷰 좋아요", notes = "리뷰 좋아요 (로그인 필요)")
 	@ApiImplicitParam(name = "reviewId", value = "좋아요 할 리뷰 아이디", dataTypeClass = Integer.class, defaultValue = "1", required = true)
-	public ResponseEntity<ResponseDto<?>> likeReview(@RequestParam int reviewId, HttpSession session)
+	public ResponseEntity<ResponseDto<?>> likeReview(@RequestBody Map<String, Object> reviewAndUserId)
 			throws Exception {
-		UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-		reviewService.likeReview(userDto.getUserId(), reviewId);
+		reviewService.likeReview(reviewAndUserId);
 		return ResponseEntity.ok(
 				ResponseDto.createResponse(
 						ReviewResponseMessage.ADD_LIKE_TO_REVIEW.getMessage()

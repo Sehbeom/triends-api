@@ -93,13 +93,11 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public void acceptMember(Map<String, Object> notificationAndPlanId, int userId)
+    public void acceptMember(Map<String, Object> userAndNotificationAndPlanId)
             throws Exception {
-        Map<String, Object> acceptMemberParameter = makeAcceptMemberParameter(
-                Integer.parseInt((String) notificationAndPlanId.get("planId")), userId);
-        planMapper.acceptMember(acceptMemberParameter);
+        planMapper.acceptMember(userAndNotificationAndPlanId);
         notificationMapper.deleteOneNotification(
-                Integer.parseInt((String) notificationAndPlanId.get("notificationId")));
+                Integer.parseInt((String) userAndNotificationAndPlanId.get("notificationId")));
     }
 
     @Override

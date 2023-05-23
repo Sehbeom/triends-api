@@ -44,11 +44,10 @@ public class PlanController {
     @GetMapping("/list")
     @LoginRequired
     @ApiOperation(value = "나의 플랜 목록 조회", notes = "사용자가 멤버로 참여 중인 플랜 목록 조회 (로그인 필요)")
-    public ResponseEntity<ResponseDto<?>> list(@ApiIgnore HttpSession session) throws Exception {
-        UserDto user = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
+    public ResponseEntity<ResponseDto<?>> list(int userId) throws Exception {
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.SEARCH_MY_PLANS_SUCCESS.getMessage(),
-                        planService.getMyPlanList(user.getUserId())));
+                        planService.getMyPlanList(userId)));
     }
 
     @GetMapping("/{planId}")
@@ -77,13 +76,11 @@ public class PlanController {
     @LoginRequired
     @ApiOperation(value = "플랜 생성", notes = "플랜 생성 (로그인 필요)")
     @ApiImplicitParam(name = "planAndCourseInfo", value = "플랜 및 일자별 코스 정보 전달 필요 (포맷은 노션 참고)", dataTypeClass = Map.class)
-    public ResponseEntity<ResponseDto<?>> create(@RequestBody Map<String, Object> planAndCourseInfo, @ApiIgnore HttpSession session)
+    public ResponseEntity<ResponseDto<?>> create(@RequestBody Map<String, Object> userAndPlanAndCourseInfo)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.CREATE_SUCCESS.getMessage(),
-                        planService.createPlan(planAndCourseInfo, userDto.getUserId())));
+                        planService.createPlan(userAndPlanAndCourseInfo, Integer.parseInt((String)userAndPlanAndCourseInfo.get("userId")))));
     }
 
     @PostMapping("/member")
@@ -93,10 +90,9 @@ public class PlanController {
             value = "멤버 초대 알림 아이디 및 플랜 아이디",
             dataTypeClass = Map.class,
             defaultValue = "{\"notificationId\":5,\"planId\":3}")
-    public ResponseEntity<ResponseDto<?>> memberAccept(@RequestBody Map<String, Object> notificationAndPlanId, @ApiIgnore HttpSession session)
+    public ResponseEntity<ResponseDto<?>> memberAccept(@RequestBody Map<String, Object> userAndNotificationAndPlanId)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-        planService.acceptMember(notificationAndPlanId, userDto.getUserId());
+        planService.acceptMember(userAndNotificationAndPlanId);
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.ACCEPT_MEMBER_SUCCESS.getMessage()));
     }

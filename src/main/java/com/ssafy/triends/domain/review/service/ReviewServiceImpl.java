@@ -4,8 +4,6 @@ import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.review.mapper.ReviewMapper;
 import com.ssafy.triends.domain.review.model.ReviewDto;
 import java.util.HashMap;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,13 +44,9 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public void likeReview(int userId, int reviewId) throws Exception {
-		Map<String, Object> userAndReviewId = makeMapperParameter(
-				new String[] {"userId", "reviewId"},
-				new Object[] {userId, reviewId});
-
-		reviewMapper.insertToUserLikeReview(userAndReviewId);
-		reviewMapper.increaseReviewLikes(reviewId);
+	public void likeReview(Map<String, Object> reviewAndUserId) throws Exception {
+		reviewMapper.insertToUserLikeReview(reviewAndUserId);
+		reviewMapper.increaseReviewLikes(Integer.parseInt((String) reviewAndUserId.get("reviewId")));
 	}
 
 	@Override

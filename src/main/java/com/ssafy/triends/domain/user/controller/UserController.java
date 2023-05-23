@@ -82,7 +82,7 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ResponseDto<?>> joinUser(UserDto userDto){
+	public ResponseEntity<ResponseDto<?>> joinUser(@RequestBody UserDto userDto){
 		try {
 			userService.joinUser(userDto);
 			List<UserDto> list=userService.userList();
@@ -94,7 +94,7 @@ public class UserController {
 
 	@PutMapping
 	@LoginRequired
-	public ResponseEntity<?> modifyUser(UserDto userDto){
+	public ResponseEntity<?> modifyUser(@RequestBody UserDto userDto){
 		try {
 			userService.modifyUser(userDto);
 			List<UserDto> list=userService.userList();
@@ -106,10 +106,8 @@ public class UserController {
 	
 	@GetMapping("/comment")
 	@LoginRequired
-	public ResponseEntity<?> getComment(HttpSession session){
+	public ResponseEntity<?> getComment(int userId){
 		try {
-			UserDto sessionDto=(UserDto)session.getAttribute(SessionDataName.USER_INFO.getName());
-			int userId=sessionDto.getUserId();
 			List<CommentDto> list=userService.getComment(userId);
 			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.GET_USER_COMMENT.getMessage(), list));
 		} catch (Exception e) {
@@ -130,13 +128,11 @@ public class UserController {
 
 	@GetMapping("/preference")
 	@LoginRequired
-	public ResponseEntity<ResponseDto<?>> getPreferences(HttpSession session) throws Exception {
-		UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
-
+	public ResponseEntity<ResponseDto<?>> getPreferences(int userId) throws Exception {
 		return ResponseEntity.ok(
 				ResponseDto.createResponse(
 						UserResponseMessage.GET_PREFERENCE.getMessage(),
-						userService.getOneUserPreferences(userDto.getUserId())
+						userService.getOneUserPreferences(userId)
 				)
 		);
 	}
