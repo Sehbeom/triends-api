@@ -1,6 +1,6 @@
 package com.ssafy.triends.global.error.exception;
 
-public class UserInfoNotFoundException extends Exception {
+public class UserInfoNotFoundException extends RuntimeException {
 
     public UserInfoNotFoundException() {
     }

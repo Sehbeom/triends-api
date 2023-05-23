@@ -25,4 +25,6 @@ public interface UserMapper {
 	UserPreferenceDto getOneUserPreferences(int userId) throws SQLException;
 	List<UserPreferenceDto> getAllOtherUsersPreferences(int userId) throws SQLException;
 	void deletePreferences(int userId);
+	void saveRefreshToken(Map<String, Object> userIdAndToken) throws SQLException;
+	void removeRefreshToken(int userId) throws SQLException;
 }

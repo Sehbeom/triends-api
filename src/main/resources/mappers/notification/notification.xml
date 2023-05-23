@@ -30,10 +30,21 @@
         values (#{receiverId}, #{senderId}, 'friend')
     </insert>
 
+<!--    <select id="getAllNotifications" parameterType="int" resultMap="notificationResultMap">-->
+<!--        select notification_id, receiver, sender, notification_type, additional_info-->
+<!--        from notification-->
+<!--        where receiver=#{userId}-->
+<!--    </select>-->
+
     <select id="getAllNotifications" parameterType="int" resultMap="notificationResultMap">
-        select notification_id, receiver, sender, notification_type, additional_info
-        from notification
-        where receiver=#{userId}
+        (select n.notification_id, n.receiver, n.sender, n.notification_type, u.name as additional_info
+         from notification n, users u
+         where n.receiver=#{userId} and n.sender=u.user_id and n.additional_info is null)
+        union
+        (select n.notification_id, n.receiver, n.sender, n.notification_type, p.title as additional_info
+         from notification n, plan p
+         where n.receiver=#{userId} and n.additional_info is not null and n.additional_info=p.plan_id)
+        order by notification_id desc;
     </select>
 
     <delete id="deleteOneNotification" parameterType="int">

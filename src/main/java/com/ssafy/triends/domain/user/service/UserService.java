@@ -23,4 +23,7 @@ public interface UserService {
 	int modifyPreferences(Map<String, Object> preferenceIds, int userId) throws Exception;
 	UserPreferenceDto getOneUserPreferences(int userId) throws Exception;
 	void deletePreference(int userId);
+	void saveRefreshToken(int userId, String refreshToken) throws Exception;
+	void removeRefreshToken(int userId) throws Exception;
+
 }

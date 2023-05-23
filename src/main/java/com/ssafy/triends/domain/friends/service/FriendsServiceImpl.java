@@ -5,7 +5,7 @@ import com.ssafy.triends.domain.user.mapper.UserMapper;
 import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.domain.friends.mapper.FriendsMapper;
 import com.ssafy.triends.domain.user.model.UserPreferenceDto;
-import com.ssafy.triends.global.util.PreferenceSimilarityCaculator;
+import com.ssafy.triends.global.util.preference.PreferenceSimilarityCaculator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;

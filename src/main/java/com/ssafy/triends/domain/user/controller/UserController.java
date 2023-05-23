@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
+
+import com.ssafy.triends.global.util.jwt.JwtOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,32 +32,41 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 	private final Logger logger = LoggerFactory.getLogger(UserController.class);
 	private UserService userService;
+	private JwtOperator jwtOperator;
 
 	@Autowired
-	public UserController(UserService userService) {
+	public UserController(UserService userService, JwtOperator jwtOperator) {
 		super();
 		this.userService = userService;
+		this.jwtOperator = jwtOperator;
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> loginUser(@RequestParam Map<String, String> map, HttpSession session){
-		Map<String, String> param=new HashMap<String, String>();
-		System.out.println(map.toString());
-		param.put("userId", map.get("userId"));
-		param.put("userPwd", map.get("userPwd"));
-		try {
-			UserDto userDto=userService.loginUser(param);
-			session.setAttribute(SessionDataName.USER_INFO.getName(), userDto);
-			return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.LOGIN_SUCCESS.getMessage(), userDto));
-		} catch (Exception e) {
-			return exceptionHandling(e);
+	public ResponseEntity<?> loginUser(@RequestParam Map<String, String> idAndPassword) throws Exception {
+		UserDto userDto = userService.loginUser(idAndPassword);
+
+		if (userDto != null) {
+			String accessToken = jwtOperator.createAccessToken("userId", userDto.getUserId());
+			String refreshToken = jwtOperator.createRefreshToken("userId", userDto.getUserId());
+			userService.saveRefreshToken(userDto.getUserId(), refreshToken);
+
+			Map<String, Object> responseData = new HashMap<>();
+			responseData.put("access-token", accessToken);
+			responseData.put("refresh-token", refreshToken);
+			responseData.put("userInfo", userDto);
+
+			return ResponseEntity.ok(
+					ResponseDto.createResponse(UserResponseMessage.LOGIN_SUCCESS.getMessage(), responseData)
+			);
+		} else {
+			return ResponseEntity.accepted().body(ResponseDto.createResponse(UserResponseMessage.LOGIN_FAIL.getMessage()));
 		}
 	}
 
-	@PostMapping("/logout")
+	@GetMapping("/logout")
 	@LoginRequired
-	public ResponseEntity<ResponseDto<?>> logoutUser(HttpSession session){
-		session.invalidate();
+	public ResponseEntity<ResponseDto<?>> logoutUser(int userId) throws Exception {
+		userService.removeRefreshToken(userId);
 		return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.LOGOUT_SUCCESS.getMessage()));
 	}
 	

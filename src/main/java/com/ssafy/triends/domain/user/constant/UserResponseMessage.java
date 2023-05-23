@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum UserResponseMessage {
     LOGIN_SUCCESS("로그인 성공했습니다."),
+    LOGIN_FAIL("로그인에 실패하였습니다."),
     LOGOUT_SUCCESS("로그아웃 되었습니다."),
     GET_USER_INFO("유저 정보 조회가 완료되었습니다."),
     JOIN_USER("회원가입이 완료되었습니다."),

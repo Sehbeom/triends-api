@@ -2,9 +2,9 @@ package com.ssafy.triends.domain.user.util;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+//import javax.mail.*;
+//import javax.mail.internet.InternetAddress;
+//import javax.mail.internet.MimeMessage;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Properties;
@@ -69,40 +69,40 @@ public class MailUtil {
 	    props.put("mail.smtp.socketFactory.port", "465");
 	    props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 	    props.put("mail.smtp.socketFactory.fallback", "false");
-	    
-	    try {
-	      //메일 서버  인증 계정 설정
-	      Authenticator auth = new Authenticator() {
-	        protected PasswordAuthentication getPasswordAuthentication() {
-	          return new PasswordAuthentication("email", "password");
-	        }
-	      };
-	      
-	      
-	      //메일 세션 생성
-	      Session session = Session.getInstance(props, auth);
-	      
-	      //MIME 타입 설정
-	      MailcapCommandMap MailcapCmdMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
-	      MailcapCmdMap.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
-	      MailcapCmdMap.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-	      MailcapCmdMap.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
-	      MailcapCmdMap.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-	      MailcapCmdMap.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
-	      CommandMap.setDefaultCommandMap(MailcapCmdMap);
-	      
-	      //메일 송/수신 옵션 설정
-	      Message message = new MimeMessage(session);
-	      message.addRecipient(Message.RecipientType.TO, new InternetAddress(userEmail));
-	      message.setFrom(new InternetAddress("dev.cheww.server@gmail.com", "EnjoyTrip", "utf-8"));
-	      message.setSubject(subject);
-	      message.setSentDate(new Date());
-		  message.setContent(content, "text/html; charset=utf-8");
-
-		  Transport.send(message);
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
+//
+//	    try {
+//	      //메일 서버  인증 계정 설정
+//	      Authenticator auth = new Authenticator() {
+//	        protected PasswordAuthentication getPasswordAuthentication() {
+//	          return new PasswordAuthentication("email", "password");
+//	        }
+//	      };
+//
+//
+//	      //메일 세션 생성
+//	      Session session = Session.getInstance(props, auth);
+//
+//	      //MIME 타입 설정
+//	      MailcapCommandMap MailcapCmdMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
+//	      MailcapCmdMap.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
+//	      MailcapCmdMap.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+//	      MailcapCmdMap.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+//	      MailcapCmdMap.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+//	      MailcapCmdMap.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+//	      CommandMap.setDefaultCommandMap(MailcapCmdMap);
+//
+//	      //메일 송/수신 옵션 설정
+//	      Message message = new MimeMessage(session);
+//	      message.addRecipient(Message.RecipientType.TO, new InternetAddress(userEmail));
+//	      message.setFrom(new InternetAddress("dev.cheww.server@gmail.com", "EnjoyTrip", "utf-8"));
+//	      message.setSubject(subject);
+//	      message.setSentDate(new Date());
+//		  message.setContent(content, "text/html; charset=utf-8");
+//
+//		  Transport.send(message);
+//	    } catch (Exception e) {
+//	    	e.printStackTrace();
+//	    }
 	    return newPwd;
 	}
 }

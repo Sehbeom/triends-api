@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ssafy.triends.domain.user.model.UserPreferenceDto;
-import com.ssafy.triends.global.util.PreferenceSimilarityCaculator;
+import com.ssafy.triends.global.util.preference.PreferenceSimilarityCaculator;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

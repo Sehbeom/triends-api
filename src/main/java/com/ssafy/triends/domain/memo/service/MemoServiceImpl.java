@@ -1,7 +1,6 @@
 package com.ssafy.triends.domain.memo.service;
 
 import com.ssafy.triends.domain.memo.mapper.MemoMapper;
-import org.json.simple.JSONArray;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,11 +22,5 @@ public class MemoServiceImpl implements MemoService {
 	public int deleteMemo(int memoId) throws Exception {
 		return 0;
 	}
-
-	@Override
-	public JSONArray getMemos(int planId, int contentId) throws Exception {
-		return null;
-	}
-	
 
 }

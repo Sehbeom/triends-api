@@ -4,6 +4,8 @@ import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.user.mapper.UserMapper;
 import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.domain.user.model.UserPreferenceDto;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -99,6 +101,20 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public void deletePreference(int userId) {
 		userMapper.deletePreferences(userId);
+	}
+
+	@Override
+	public void saveRefreshToken(int userId, String refreshToken) throws Exception {
+		Map<String, Object> userIdAndToken = new HashMap<>();
+		userIdAndToken.put("userId", userId);
+		userIdAndToken.put("refreshToken", refreshToken);
+
+		userMapper.saveRefreshToken(userIdAndToken);
+	}
+
+	@Override
+	public void removeRefreshToken(int userId) throws Exception {
+		userMapper.removeRefreshToken(userId);
 	}
 
 	private Map<String, Object> makeRegistPreferencesParameter(Map<String, Object> preferenceIds, int userId) {

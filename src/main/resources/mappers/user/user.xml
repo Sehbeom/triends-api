@@ -93,4 +93,15 @@
 		where user_id=#{userId};
 	</delete>
 
+	<update id="saveRefreshToken" parameterType="map">
+		update users
+		set refresh_token=#{refreshToken}
+		where user_id=#{userId}
+	</update>
+
+	<update id="removeRefreshToken" parameterType="int">
+		update users
+		set refresh_token=null
+		where user_id=#{userId}
+	</update>
 </mapper>
