@@ -17,7 +17,9 @@ public enum UserResponseMessage {
     GET_PREFERENCE("선호 카테고리가 조회되었습니다."),
     REGISTER_PREFERENCE("선호 카테고리가 등록되었습니다."),
     MODIFY_PREFERENCE("선호 카테고리가 수정되었습니다."),
-    DELETE_PREFERENCE("선호 카테고리가 모두 삭제되었습니다.");
+    DELETE_PREFERENCE("선호 카테고리가 모두 삭제되었습니다."),
+    AUTHORIZATION_SUCCESS("사용자 정보가 인증되었습니다."),
+    ACCESS_TOKEN_REISSUE_SUCCESS("토큰 재발급이 완료되었습니다.");
 
     private final String message;
 }

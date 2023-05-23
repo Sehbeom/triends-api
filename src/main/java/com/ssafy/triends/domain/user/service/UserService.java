@@ -25,5 +25,6 @@ public interface UserService {
 	void deletePreference(int userId);
 	void saveRefreshToken(int userId, String refreshToken) throws Exception;
 	void removeRefreshToken(int userId) throws Exception;
+	String getRefreshToken(int userId) throws Exception;
 
 }

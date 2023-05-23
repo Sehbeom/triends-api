@@ -117,6 +117,11 @@ public class UserServiceImpl implements UserService{
 		userMapper.removeRefreshToken(userId);
 	}
 
+	@Override
+	public String getRefreshToken(int userId) throws Exception {
+		return userMapper.getRefreshToken(userId);
+	}
+
 	private Map<String, Object> makeRegistPreferencesParameter(Map<String, Object> preferenceIds, int userId) {
 		preferenceIds.put("userId", userId);
 

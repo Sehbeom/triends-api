@@ -6,10 +6,12 @@ import com.ssafy.triends.domain.user.model.UserDto;
 import com.ssafy.triends.domain.user.service.UserService;
 import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
+import com.ssafy.triends.global.error.exception.ExceptionMessage;
 import com.ssafy.triends.global.interceptor.LoginRequired;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.ssafy.triends.global.util.jwt.JwtOperator;
@@ -42,8 +44,9 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> loginUser(@RequestParam Map<String, String> idAndPassword) throws Exception {
+	public ResponseEntity<?> loginUser(@RequestBody Map<String, String> idAndPassword) throws Exception {
 		UserDto userDto = userService.loginUser(idAndPassword);
+		logger.debug("user ID : {}", userDto.getUserId());
 
 		if (userDto != null) {
 			String accessToken = jwtOperator.createAccessToken("userId", userDto.getUserId());
@@ -183,7 +186,53 @@ public class UserController {
 				)
 		);
 	}
-	
+
+	@GetMapping("/authorization")
+	public ResponseEntity<ResponseDto<?>> authorization(int userId, HttpServletRequest request) throws Exception {
+		String accessToken = request.getHeader("access-token");
+		if (accessToken == null) {
+			return ResponseEntity.accepted().body(ResponseDto.createResponse(ExceptionMessage.USERINFO_NOT_FOUND.getMessage()));
+		}
+
+		if (jwtOperator.checkToken(accessToken)) {
+			UserDto userDto = userService.getUser(userId);
+			return ResponseEntity.ok(
+					ResponseDto.createResponse(
+							UserResponseMessage.AUTHORIZATION_SUCCESS.getMessage(),
+							userDto
+					)
+			);
+		}
+
+		return ResponseEntity.accepted().body(ResponseDto.createResponse(ExceptionMessage.TOKEN_EXPIRED.getMessage()));
+	}
+
+	@GetMapping("/authorization/refresh")
+	public ResponseEntity<ResponseDto<?>> reissueAccessToken(int userId, HttpServletRequest request) throws Exception {
+		String refreshToken = request.getHeader("refresh-token");
+
+		if (refreshToken == null) {
+			return ResponseEntity.accepted().body(ResponseDto.createResponse(ExceptionMessage.USERINFO_NOT_FOUND.getMessage()));
+		}
+
+		String originRefreshToken = userService.getRefreshToken(userId);
+		if (originRefreshToken.equals(refreshToken)) {
+			UserDto userDto = userService.getUser(userId);
+			String accessToken = jwtOperator.createAccessToken("userId", userId);
+
+			Map<String, Object> tokenAndUserInfo = new HashMap<>();
+			tokenAndUserInfo.put("access-token", accessToken);
+			tokenAndUserInfo.put("userInfo", userDto);
+
+			return ResponseEntity.ok(
+					ResponseDto.createResponse(UserResponseMessage.ACCESS_TOKEN_REISSUE_SUCCESS.getMessage(),
+							tokenAndUserInfo)
+			);
+		}
+
+		return ResponseEntity.accepted().body(ResponseDto.createResponse(ExceptionMessage.TOKEN_EXPIRED.getMessage()));
+	}
+
 	private ResponseEntity<ResponseDto<?>> exceptionHandling(Exception e) {
 		e.printStackTrace();
 		return (ResponseEntity<ResponseDto<?>>) ResponseEntity.notFound();

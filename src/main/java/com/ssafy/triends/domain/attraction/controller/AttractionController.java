@@ -71,12 +71,11 @@ public class AttractionController {
     @GetMapping("/recommend")
     @LoginRequired
     @ApiOperation(value="여행지 추천 - 취향 기반", notes = "로그인한 사용자의 취향에 적합한 여행지 추천 목록을 조회한다. (로그인 필요)")
-    public ResponseEntity<ResponseDto<?>> getRecommendAttractions(@ApiIgnore HttpSession session)
+    public ResponseEntity<ResponseDto<?>> getRecommendAttractions(@RequestParam int userId)
             throws Exception {
-        UserDto userDto = (UserDto) session.getAttribute(SessionDataName.USER_INFO.getName());
         return ResponseEntity.ok(ResponseDto.createResponse(
                 AttractionResponseMessage.GET_RECOMMEND_ATTRACTIONS_SUCCESS.getMessage(),
-                attractionInfoService.getRecommendAttractions(userDto.getUserId())
+                attractionInfoService.getRecommendAttractions(userId)
         ));
     }
 

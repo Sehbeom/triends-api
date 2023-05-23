@@ -51,6 +51,12 @@
 		insert into users (id, password, name, tel, profileimg, email) values
 		(#{id}, #{password}, #{name}, #{tel}, #{profileimg}, #{email})
 	</insert>
+
+	<select id="getUser" parameterType="int" resultMap="userDto">
+		select user_id, id, password, name, tel, profileimg, email, admin
+		from users
+		where user_id=#{userId}
+	</select>
 	
 	<update id="modifyUser" parameterType="userDto">
 		update users
@@ -104,4 +110,8 @@
 		set refresh_token=null
 		where user_id=#{userId}
 	</update>
+
+	<select id="getRefreshToken" parameterType="int" resultType="String">
+		select refresh_token from users where user_id=#{userId}
+	</select>
 </mapper>
