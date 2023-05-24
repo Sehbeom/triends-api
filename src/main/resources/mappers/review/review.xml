@@ -17,15 +17,6 @@
         <result column="scrapped" property="scrapped"/>
     </resultMap>
 
-    <resultMap id="commentDto" type="commentDto">
-        <result column="comment_id" property="commentId"/>
-        <result column="review_id" property="reviewId"/>
-        <result column="user_id" property="userId"/>
-        <result column="created_at" property="createdAt"/>
-        <result column="content" property="content"/>
-        <result column="name" property="name"/>
-    </resultMap>
-
     <resultMap id="reviewWithPlan" type="reviewDto" extends="reviewDto">
         <association property="planInfo" column="plan_id" select="selectForReviewWithPlan" />
     </resultMap>
@@ -116,18 +107,6 @@
         insert into review (subject, content, user_id, plan_id) values
         (#{subject}, #{content} ,#{userId}, #{planId})
     </insert>
-
-    <insert id="registComment" parameterType="commentDto">
-        insert into comment (review_id, user_id, name, content, created_at) values
-        (#{reviewId}, #{userId}, #{name}, #{content}, now())
-    </insert>
-
-    <select id="getComment" parameterType="int" resultMap="commentDto">
-        select c.comment_id, c.review_id, c.user_id, u.name, c.content, c.created_at
-        from comment c
-        join users u on c.user_id=u.user_id
-        where review_id=#{reviewId}
-    </select>
 
     <select id="myReviews" parameterType="int" resultMap="reviewDto">
         select r.review_id, r.subject, r.content, r.user_id, u.name, r.plan_id, p.title, r.created_at, r.modified_at, r.likes, r.scrapped

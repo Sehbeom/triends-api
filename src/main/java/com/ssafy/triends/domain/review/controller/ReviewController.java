@@ -1,6 +1,5 @@
 package com.ssafy.triends.domain.review.controller;
 
-import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.review.constant.ReviewResponseMessage;
 import com.ssafy.triends.domain.review.model.ReviewDto;
 import com.ssafy.triends.domain.review.service.ReviewService;
@@ -76,23 +75,6 @@ public class ReviewController {
 		}
 	}
 
-	@PostMapping("detail/comment")
-	@LoginRequired
-	@ApiOperation(value = "댓글 등록", notes = "댓글 등록 (로그인 필요)")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "reviewId", value = "리뷰 아이디", dataTypeClass = Integer.class, defaultValue = "1", required = true),
-			@ApiImplicitParam(name = "content", value = "내용", dataTypeClass = String.class, defaultValue = "내용", required = true),
-	})
-	public ResponseEntity<?> registComment(@RequestBody CommentDto commentDto){
-		try {
-			reviewService.registComment(commentDto);
-			int reviewId=commentDto.getReviewId();
-			List<CommentDto> list = reviewService.getComment(reviewId);
-			return ResponseEntity.ok(ResponseDto.createResponse(ReviewResponseMessage.REGIST_COMMENT.getMessage(),list));
-		} catch (Exception e) {
-			return exceptionHandling(e);
-		}
-	}
 	@GetMapping
 	@LoginRequired
 	@ApiOperation(value = "내가 쓴 리뷰 목록 조회", notes = "내가 쓴 리뷰 목록 조회 (로그인 필요)")

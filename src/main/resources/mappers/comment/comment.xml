@@ -3,5 +3,39 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.triends.domain.comment.mapper.CommentMapper">
+    <resultMap id="commentDto" type="commentDto">
+        <result column="comment_id" property="commentId"/>
+        <result column="review_id" property="reviewId"/>
+        <result column="user_id" property="userId"/>
+        <result column="name" property="name"/>
+        <result column="content" property="content"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
 
+    <select id="getOneComment" parameterType="int" resultMap="commentDto">
+        select comment_id, review_id, user_id, name, content, created_at
+        from comment
+        where comment_id=#{commentId}
+    </select>
+
+    <select id="getAllCommentsOfOneReview" parameterType="int" resultMap="commentDto">
+        select comment_id, review_id, user_id, name, content, created_at
+        from comment
+        where review_id=#{reviewId}
+    </select>
+
+    <select id="getAllCommentsOfOneUser" parameterType="int" resultMap="commentDto">
+        select comment_id, review_id, user_id, name, content, created_at
+        from comment
+        where review_id=#{userId}
+    </select>
+
+    <insert id="registOneComment" parameterType="commentDto" useGeneratedKeys="true" keyProperty="commentId">
+        insert into comment (review_id, user_id, name, content)
+        values (#{reviewId}, #{userId}, (select name from users where user_id=#{userId}), #{content})
+    </insert>
+
+    <delete id="deleteOneComment" parameterType="int">
+        delete from comment where comment_id=#{commentId}
+    </delete>
 </mapper>
