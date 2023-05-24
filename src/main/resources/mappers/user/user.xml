@@ -47,7 +47,7 @@
 		from users
 	</select>
 	
-	<insert id="joinUser" parameterType="userDto" >
+	<insert id="joinUser" parameterType="userDto" useGeneratedKeys="true" keyProperty="userId">
 		insert into users (id, password, name, tel, profileimg, email) values
 		(#{id}, #{password}, #{name}, #{tel}, #{profileimg}, #{email})
 	</insert>
@@ -61,7 +61,7 @@
 	<update id="modifyUser" parameterType="userDto">
 		update users
 		set password=#{password}, name=#{name}, tel=#{tel}, profileimg=#{profileimg}, email=#{email}
-		where id=#{id}
+		where user_id=#{userId}
 	</update>
 
 	<select id="getComment" parameterType="int" resultMap="commentDto">

@@ -4,9 +4,6 @@ import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.review.constant.ReviewResponseMessage;
 import com.ssafy.triends.domain.review.model.ReviewDto;
 import com.ssafy.triends.domain.review.service.ReviewService;
-import com.ssafy.triends.domain.user.constant.UserResponseMessage;
-import com.ssafy.triends.domain.user.model.UserDto;
-import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
 import com.ssafy.triends.global.interceptor.LoginRequired;
 import io.swagger.annotations.Api;
@@ -18,11 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/review")

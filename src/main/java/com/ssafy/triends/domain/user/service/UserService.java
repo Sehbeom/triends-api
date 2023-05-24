@@ -19,8 +19,8 @@ public interface UserService {
 	List<UserDto> userList() throws Exception;
 	List<CommentDto> getComment(int userId) throws Exception;
 	int deleteComment(int commentId) throws Exception;
-	int registPreferences(Map<String, Object> preferenceIds, int userId) throws Exception;
-	int modifyPreferences(Map<String, Object> preferenceIds, int userId) throws Exception;
+	int registPreferences(Map<String, Object> userIdAndPreferenceIds) throws Exception;
+	int modifyPreferences(Map<String, Object> userIdAndPreferenceIds) throws Exception;
 	UserPreferenceDto getOneUserPreferences(int userId) throws Exception;
 	void deletePreference(int userId);
 	void saveRefreshToken(int userId, String refreshToken) throws Exception;

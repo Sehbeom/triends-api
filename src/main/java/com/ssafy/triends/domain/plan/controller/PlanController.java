@@ -2,21 +2,17 @@ package com.ssafy.triends.domain.plan.controller;
 
 import com.ssafy.triends.domain.plan.constant.PlanResponseMessage;
 import com.ssafy.triends.domain.plan.service.PlanService;
-import com.ssafy.triends.domain.user.model.UserDto;
-import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
 import com.ssafy.triends.global.interceptor.LoginRequired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import java.util.Map;
-import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/plan")

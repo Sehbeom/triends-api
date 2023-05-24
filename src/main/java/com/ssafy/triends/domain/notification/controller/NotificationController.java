@@ -2,20 +2,17 @@ package com.ssafy.triends.domain.notification.controller;
 
 import com.ssafy.triends.domain.notification.constant.NotificationResponseMessage;
 import com.ssafy.triends.domain.notification.service.NotificationService;
-import com.ssafy.triends.domain.user.model.UserDto;
-import com.ssafy.triends.global.constant.SessionDataName;
 import com.ssafy.triends.global.dto.ResponseDto;
 import com.ssafy.triends.global.interceptor.LoginRequired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import java.util.Map;
-import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/notification")

@@ -79,18 +79,16 @@ public class UserServiceImpl implements UserService{
 	 }
 
 	@Override
-	public int registPreferences(Map<String, Object> preferenceIds, int userId) throws Exception {
-		logger.debug("preferenceIds : {}", preferenceIds.get("preferenceIds"));
-		Map<String, Object> registPreferencesParameter = makeRegistPreferencesParameter(preferenceIds, userId);
-		return userMapper.registPreferences(registPreferencesParameter);
+	public int registPreferences(Map<String, Object> userIdAndPreferenceIds) throws Exception {
+		logger.debug("preferenceIds : {}", userIdAndPreferenceIds.get("preferenceIds"));
+		return userMapper.registPreferences(userIdAndPreferenceIds);
 	}
 
 	@Override
-	public int modifyPreferences(Map<String, Object> preferenceIds, int userId) throws Exception {
-		userMapper.deletePreferences(userId);
-		Map<String, Object> registPreferencesParameter = makeRegistPreferencesParameter(preferenceIds, userId);
+	public int modifyPreferences(Map<String, Object> userIdAndPreferenceIds) throws Exception {
+		userMapper.deletePreferences(Integer.parseInt((String) userIdAndPreferenceIds.get("userId")));
 
-		return userMapper.registPreferences(registPreferencesParameter);
+		return userMapper.registPreferences(userIdAndPreferenceIds);
 	}
 
 	@Override
@@ -122,9 +120,4 @@ public class UserServiceImpl implements UserService{
 		return userMapper.getRefreshToken(userId);
 	}
 
-	private Map<String, Object> makeRegistPreferencesParameter(Map<String, Object> preferenceIds, int userId) {
-		preferenceIds.put("userId", userId);
-
-		return preferenceIds;
-	}
 }
