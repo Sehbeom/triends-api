@@ -1,7 +1,6 @@
 package com.ssafy.triends.domain.plan.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ssafy.triends.domain.user.model.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +20,9 @@ public class PlanDto {
 	private String thumbnail;
 	private double centerLat;
 	private double centerLng;
-	private List<UserDto> members;
-	@JsonProperty(value="courseInfo")
+	@JsonProperty(value = "memberInfo")
+	private List<PlanMemberDto> members;
+	@JsonProperty(value = "courseInfo")
 	private List<DayDto> days;
 
 }

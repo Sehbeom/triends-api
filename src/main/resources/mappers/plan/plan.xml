@@ -8,6 +8,7 @@
         <result property="contentId" column="content_id"/>
         <result property="contentTypeId" column="content_type_id"/>
         <result property="title" column="title"/>
+        <result property="description" column="overview" />
         <result property="addr1" column="addr1"/>
         <result property="addr2" column="addr2"/>
         <result property="zipCode" column="zipcode"/>
@@ -32,14 +33,27 @@
         <result property="thumbnail" column="thumbnail" />
     </resultMap>
 
-    <resultMap id="planWithDays" type="planDto" extends="onlyPlan">
+    <resultMap id="planWithDaysAndMember" type="planDto" extends="onlyPlan">
         <collection property="days" column="plan_id" javaType="list" ofType="dayWithCourse" select="selectForPlanWithDays" />
+        <collection property="members" column="plan_id" javaType="list" ofType="onlyPlanMember" select="selectForPlanWithMembers" />
     </resultMap>
 
     <select id="selectForPlanWithDays" resultMap="dayWithCourse">
         select days_id, plan_id, day_info
         from days
         where plan_id=#{planId}
+    </select>
+
+    <resultMap id="onlyPlanMember" type="planMemberDto">
+        <result property="userId" column="user_id" />
+        <result property="name" column="name" />
+        <result property="profileimg" column="profileimg" />
+    </resultMap>
+
+    <select id="selectForPlanWithMembers" resultMap="onlyPlanMember">
+        select u.user_id, u.name, u.profileimg
+        from members m, users u
+        where m.plan_id=#{planId} and m.user_id=u.user_id
     </select>
 
     <resultMap id="onlyDay" type="dayDto">
@@ -71,9 +85,23 @@
     </resultMap>
 
     <select id="selectForCourseWithAttraction" resultMap="attractionMap">
-        select content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, readcount, sido_code, gugun_code, latitude, longitude, mlevel
-        from attraction_info
-        where content_id=#{contentId}
+        select ai.content_id,
+               ai.content_type_id,
+               ai.title,
+               ad.overview,
+               ai.addr1,
+               ai.addr2,
+               ai.zipcode,
+               ai.tel,
+               ai.first_image,
+               ai.readcount,
+               ai.sido_code,
+               ai.gugun_code,
+               ai.latitude,
+               ai.longitude,
+               ai.mlevel
+        from attraction_info ai, attraction_description ad
+        where ai.content_id=#{contentId} and ai.content_id=ad.content_id
     </select>
 
     <select id="getMyPlanList" resultMap="onlyPlan" parameterType="int">
@@ -85,7 +113,7 @@
         order by p.plan_id desc
     </select>
 
-    <select id="getPlanDetail" resultMap="planWithDays" parameterType="int">
+    <select id="getPlanDetail" resultMap="planWithDaysAndMember" parameterType="int">
         select plan_id, title, start_date, end_date, center_lat, center_lng, thumbnail
         from plan
         where plan_id=#{planId}
@@ -148,7 +176,7 @@
         values (#{planId}, #{userId})
     </insert>
 
-    <select id="getRecommendPlans" parameterType="map" resultMap="planWithDays">
+    <select id="getRecommendPlans" parameterType="map" resultMap="planWithDaysAndMember">
         select p.plan_id, p.title, p.start_date, p.end_date, p.center_lat, p.center_lng, p.thumbnail
         from
             plan p,
