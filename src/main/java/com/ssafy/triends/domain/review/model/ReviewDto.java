@@ -24,6 +24,7 @@ public class ReviewDto {
 	private String modifiedAt;
 	private int likes;
 	private int scrapped;
+	private boolean canLike;
 
 	private PlanDto planInfo;
 }

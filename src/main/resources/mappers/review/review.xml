@@ -15,6 +15,7 @@
         <result column="modified_at" property="modifiedAt"/>
         <result column="likes" property="likes"/>
         <result column="scrapped" property="scrapped"/>
+        <result property="canLike" column="can_like" />
     </resultMap>
 
     <resultMap id="reviewWithPlan" type="reviewDto" extends="reviewDto">
@@ -81,29 +82,71 @@
         where content_id=#{contentId}
     </select>
 
-    <select id="orderedList" parameterType="int" resultMap="reviewDto">
-        select r.review_id, r.subject, r.content, r.user_id, u.name, r.plan_id, p.title, r.created_at, r.modified_at, r.likes, r.scrapped
-        from review r
-        join users u on r.user_id=u.user_id
-        join plan p on r.plan_id=p.plan_id
-        <if test="order==0">
-            order by r.review_id desc;
+    
+    <resultMap id="listItemOnlyReviewAndPlan" type="reviewListItemDto">
+        <result property="reviewId" column="review_id" />
+        <result property="subject" column="subject" />
+        <result property="content" column="content" />
+        <result property="writerId" column="user_id" />
+        <result property="writerName" column="name" />
+        <result property="planId" column="plan_id" />
+        <result property="likes" column="likes" />
+        <result property="scrapped" column="scrapped" />
+        <result property="startDate" column="start_date" />
+        <result property="endDate" column="end_date" />
+        <result property="thumbnail" column="thumbnail" />
+    </resultMap>
+
+    <resultMap id="listItemReviewAndPlanWithCourses" type="reviewListItemDto" extends="listItemOnlyReviewAndPlan">
+        <collection property="attractions" column="plan_id" ofType="String" javaType="list" select="selectForListItemReviewAndPlanWithCourses" />
+    </resultMap>
+
+    <select id="selectForListItemReviewAndPlanWithCourses" parameterType="int" resultType="String">
+        select ai.title
+        from days d, course c, attraction_info ai
+        where
+            d.plan_id=#{planId} and
+            d.days_id=c.days_id and
+            c.content_id=ai.content_id
+        order by d.day_info, c.start_time
+    </select>
+
+    <select id="orderedList" parameterType="String" resultMap="listItemReviewAndPlanWithCourses">
+        select r.review_id, r.subject, r.content, r.user_id, u.name, r.plan_id, p.start_date, p.end_date, p.thumbnail, r.likes, r.scrapped
+        from review r, plan p, users u
+        where r.plan_id=p.plan_id and r.user_id=u.user_id
+        <if test="'latest'.equals(order)">
+            order by r.created_at desc
         </if>
-        <if test="order==1">
-            order by title
+        <if test="'subject'.equals(order)">
+            order by r.subject
         </if>
-        <if test="order==2">
-            order by modified_at
+        <if test="'likes'.equals(order)">
+            order by r.likes desc
+        </if>
+        <if test="'scrapped'.equals(order)">
+            order by r.scrapped desc
         </if>
     </select>
 
-    <select id="detailReview" parameterType="int" resultMap="reviewWithPlan">
+    <select id="detailReview" parameterType="map" resultMap="reviewWithPlan">
         select review_id, subject, content, user_id, plan_id, created_at, modified_at, likes, scrapped
+               <if test="userId != null">
+               ,
+               case
+                   when <include refid="checkLiked" /> = 0 then "true"
+                    else "false"
+               end as "can_like"
+               </if>
         from review
         where review_id=#{reviewId}
     </select>
 
-    <insert id="writeReview" parameterType="reviewDto">
+    <sql id="checkLiked">
+        (select count(*) from user_like_review where user_id=#{userId} and review_id=#{reviewId})
+    </sql>
+
+    <insert id="writeReview" parameterType="reviewDto" useGeneratedKeys="true" keyProperty="reviewId">
         insert into review (subject, content, user_id, plan_id) values
         (#{subject}, #{content} ,#{userId}, #{planId})
     </insert>
@@ -135,6 +178,23 @@
     <update id="increaseReviewLikes" parameterType="int">
         update review
         set likes = likes + 1
+        where review_id=#{reviewId}
+    </update>
+
+    <delete id="deleteFromUserLikeReview" parameterType="map">
+        delete from user_like_review
+        where user_id=#{userId} and review_id=#{reviewId}
+    </delete>
+
+    <update id="decreaseReviewLikes" parameterType="int">
+        update review
+        set likes = likes - 1
+        where review_id=#{reviewId}
+    </update>
+
+    <update id="increaseReviewScrapped" parameterType="int">
+        update review
+        set scrapped = scrapped + 1
         where review_id=#{reviewId}
     </update>
 </mapper>

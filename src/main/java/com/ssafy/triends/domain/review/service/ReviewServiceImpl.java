@@ -2,6 +2,7 @@ package com.ssafy.triends.domain.review.service;
 
 import com.ssafy.triends.domain.review.mapper.ReviewMapper;
 import com.ssafy.triends.domain.review.model.ReviewDto;
+import com.ssafy.triends.domain.review.model.ReviewListItemDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,13 +18,13 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public List<ReviewDto> orderedList(int selected) throws Exception {
-		return reviewMapper.orderedList(selected);
+	public List<ReviewListItemDto> orderedList(String order) throws Exception {
+		return reviewMapper.orderedList(order);
 	}
 
 	@Override
-	public ReviewDto detailReview(int reviewId) throws Exception {
-		return reviewMapper.detailReview(reviewId);
+	public ReviewDto detailReview(Map<String, Object> userIdAndReviewId) throws Exception {
+		return reviewMapper.detailReview(userIdAndReviewId);
 	}
 
 	@Override
@@ -35,6 +36,12 @@ public class ReviewServiceImpl implements ReviewService {
 	public void likeReview(Map<String, Object> reviewAndUserId) throws Exception {
 		reviewMapper.insertToUserLikeReview(reviewAndUserId);
 		reviewMapper.increaseReviewLikes(Integer.parseInt((String) reviewAndUserId.get("reviewId")));
+	}
+
+	@Override
+	public void unlikeReview(Map<String, Object> reviewAndUserId) throws Exception {
+		reviewMapper.deleteFromUserLikeReview(reviewAndUserId);
+		reviewMapper.decreaseReviewLikes(Integer.parseInt((String) reviewAndUserId.get("reviewId")));
 	}
 
 	@Override
@@ -50,5 +57,10 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public void deleteReview(int reviewId) throws Exception {
 		reviewMapper.deleteReview(reviewId);
+	}
+
+	@Override
+	public void increaseReviewScrapped(int reviewId) throws Exception {
+		reviewMapper.increaseReviewScrapped(reviewId);
 	}
 }
