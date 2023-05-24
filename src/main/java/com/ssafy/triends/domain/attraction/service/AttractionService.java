@@ -2,9 +2,7 @@ package com.ssafy.triends.domain.attraction.service;
 
 import com.ssafy.triends.domain.attraction.model.AttractionDto;
 import com.ssafy.triends.domain.attraction.model.SearchDto;
-import com.ssafy.triends.domain.user.model.UserPreferenceDto;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 

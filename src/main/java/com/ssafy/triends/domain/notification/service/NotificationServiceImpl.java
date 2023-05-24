@@ -4,7 +4,6 @@ import com.ssafy.triends.domain.notification.mapper.NotificationMapper;
 import com.ssafy.triends.domain.notification.model.NotificationDto;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

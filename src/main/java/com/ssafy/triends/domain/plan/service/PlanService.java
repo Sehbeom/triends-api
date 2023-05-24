@@ -3,7 +3,6 @@ package com.ssafy.triends.domain.plan.service;
 import com.ssafy.triends.domain.plan.model.DayDto;
 import com.ssafy.triends.domain.plan.model.PlanDto;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 

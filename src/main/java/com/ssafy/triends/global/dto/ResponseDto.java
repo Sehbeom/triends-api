@@ -1,10 +1,6 @@
 package com.ssafy.triends.global.dto;
 
-import org.springframework.boot.context.properties.ConstructorBinding;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class ResponseDto<T> {

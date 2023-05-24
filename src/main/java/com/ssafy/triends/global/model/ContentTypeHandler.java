@@ -1,6 +1,5 @@
 package com.ssafy.triends.global.model;
 
-import com.ssafy.triends.global.model.ContentType;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
 import org.apache.ibatis.type.TypeHandler;
@@ -9,7 +8,6 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 @MappedTypes(ContentType.class)
 public class ContentTypeHandler<E extends Enum<E>> implements TypeHandler<ContentType> {
