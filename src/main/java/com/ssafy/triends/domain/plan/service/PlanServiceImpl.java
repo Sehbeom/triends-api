@@ -151,7 +151,7 @@ public class PlanServiceImpl implements PlanService {
             throws Exception {
         DayDto dayDto = new DayDto();
         dayDto.setPlanId(planDto.getPlanId());
-        dayDto.setDayInfo(Integer.parseInt((String) oneDay.get("day")));
+        dayDto.setDayInfo(Integer.parseInt((String) oneDay.get("dayInfo")));
 
         // TODO : days 테이블 삽입
         planMapper.createDay(dayDto);

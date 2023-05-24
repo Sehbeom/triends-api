@@ -8,6 +8,7 @@
         <result property="contentId" column="content_id"/>
         <result property="contentTypeId" column="content_type_id"/>
         <result property="title" column="title"/>
+        <result property="description" column="overview" />
         <result property="addr1" column="addr1"/>
         <result property="addr2" column="addr2"/>
         <result property="zipCode" column="zipcode"/>
@@ -27,89 +28,94 @@
     </resultMap>
 
     <select id="getAttractionDetail" resultMap="onlyAttraction" parameterType="int">
-        select content_id,
-               content_type_id,
-               title,
-               addr1,
-               addr2,
-               zipcode,
-               tel,
-               first_image,
-               first_image2,
-               readcount,
-               sido_code,
-               gugun_code,
-               latitude,
-               longitude,
-               mlevel
-        from attraction_info
-        where content_id = #{contentId}
+        select ai.content_id,
+               ai.content_type_id,
+               ai.title,
+               ad.overview,
+               ai.addr1,
+               ai.addr2,
+               ai.zipcode,
+               ai.tel,
+               ai.first_image,
+               ai.first_image2,
+               ai.readcount,
+               ai.sido_code,
+               ai.gugun_code,
+               ai.latitude,
+               ai.longitude,
+               ai.mlevel
+        from attraction_info ai, attraction_description ad
+        where ai.content_id = #{contentId} and ai.content_id=ad.content_id
     </select>
 
     <select id="searchAttractions" resultMap="onlyAttraction" parameterType="searchDto">
         select
-        content_id,
-        content_type_id,
-        title,
-        addr1,
-        addr2,
-        zipcode,
-        tel,
-        first_image,
-        first_image2,
-        readcount,
-        sido_code,
-        gugun_code,
-        latitude,
-        longitude,
-        mlevel
-        from attraction_info
+        ai.content_id,
+        ai.content_type_id,
+        ai.title,
+        ad.overview,
+        ai.addr1,
+        ai.addr2,
+        ai.zipcode,
+        ai.tel,
+        ai.first_image,
+        ai.first_image2,
+        ai.readcount,
+        ai.sido_code,
+        ai.gugun_code,
+        ai.latitude,
+        ai.longitude,
+        ai.mlevel
+        from attraction_info ai, attraction_description ad
         where
-            (latitude between #{swLat} and #{neLat})
-            and (longitude between #{swLng} and #{neLng})
+            ai.content_id=ad.content_id and
+            (ai.latitude between #{swLat} and #{neLat})
+            and (ai.longitude between #{swLng} and #{neLng})
         <if test="contentTypeId != null and contentTypeId != 0">
-            and (content_type_id = #{contentTypeId})
+            and (ai.content_type_id = #{contentTypeId})
         </if>
         <if test="sidoCode != null and sidoCode != 0">
-            and (sido_code = #{sidoCode})
+            and (ai.sido_code = #{sidoCode})
         </if>
         <if test="gugunCode != null and gugunCode != 0">
-            and (gugun_code = #{gugunCode})
+            and (ai.gugun_code = #{gugunCode})
         </if>
         <if test="keyword != null">
             and (
-            (title like concat('%', #{keyword}, '%'))
-            or (addr1 like concat('%', #{keyword}, '%'))
-            or (addr2 like concat('%', #{keyword}, '%'))
+            (ai.title like concat('%', #{keyword}, '%'))
+            or (ai.addr1 like concat('%', #{keyword}, '%'))
+            or (ai.addr2 like concat('%', #{keyword}, '%'))
             )
         </if>
-        order by readcount desc
+        order by ai.readcount desc
         limit 10
     </select>
 
     <select id="getAttractionsOrderByRates" resultMap="attractionWithRates" parameterType="map">
-        select content_id,
-               content_type_id,
-               title,
-               addr1,
-               addr2,
-               zipcode,
-               tel,
-               first_image,
-               first_image2,
-               readcount,
-               sido_code,
-               gugun_code,
-               latitude,
-               longitude,
-               mlevel,
+        select ai.content_id,
+               ai.content_type_id,
+               ai.title,
+               ad.overview,
+               ai.addr1,
+               ai.addr2,
+               ai.zipcode,
+               ai.tel,
+               ai.first_image,
+               ai.first_image2,
+               ai.readcount,
+               ai.sido_code,
+               ai.gugun_code,
+               ai.latitude,
+               ai.longitude,
+               ai.mlevel,
                (select avg(score) from rates r where ai.content_id = r.content_id) rate
-        from attraction_info ai
+        from attraction_info ai, attraction_description ad
+        where ai.content_id=ad.content_id
         <choose>
           <when test="swLat != null and swLng != null and neLat != null and neLng != null">
-            where
-            (latitude between #{swLat} and #{neLat}) and
-            (longitude between #{swLng} and #{neLng})
+            and
+            (ai.latitude between #{swLat} and #{neLat}) and
+            (ai.longitude between #{swLng} and #{neLng})
             order by rate desc
             limit 20
           </when>
@@ -125,6 +131,7 @@
       ai.content_id,
       ai.content_type_id,
       ai.title,
+      ad.overview,
       ai.addr1,
       ai.addr2,
       ai.zipcode,
@@ -140,11 +147,13 @@
       (select avg(score) from rates where content_id=ai.content_id) rate
     from
       attraction_info ai,
+      attraction_description ad,
       members m,
       plan p,
       days d,
       course c
     where
+      ai.content_id=ad.content_id and
       m.user_id in <foreach collection="list" open="(" close=")" separator="," item="userId">#{userId}</foreach> and
       m.plan_id=p.plan_id and
       p.plan_id=d.plan_id and

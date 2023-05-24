@@ -13,6 +13,7 @@ public class AttractionDto {
 	private int contentId;
 	private int contentTypeId;
 	private String title;
+	private String description;
 	private String addr1;
 	private String addr2;
 	private String zipCode;
