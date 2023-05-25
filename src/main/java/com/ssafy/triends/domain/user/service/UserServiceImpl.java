@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public int modifyPreferences(Map<String, Object> userIdAndPreferenceIds) throws Exception {
-		userMapper.deletePreferences(Integer.parseInt((String) userIdAndPreferenceIds.get("userId")));
+		userMapper.deletePreferences((Integer) userIdAndPreferenceIds.get("userId"));
 
 		return userMapper.registPreferences(userIdAndPreferenceIds);
 	}

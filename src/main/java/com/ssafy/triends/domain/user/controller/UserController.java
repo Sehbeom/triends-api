@@ -147,7 +147,7 @@ public class UserController {
         return ResponseEntity.ok(
                 ResponseDto.createResponse(
                         UserResponseMessage.REGISTER_PREFERENCE.getMessage(),
-                        userService.getOneUserPreferences(Integer.parseInt((String) userIdAndpreferenceIds.get("userId")))
+                        userService.getOneUserPreferences((Integer) userIdAndpreferenceIds.get("userId"))
                 )
         );
     }
@@ -161,7 +161,7 @@ public class UserController {
         return ResponseEntity.ok(
                 ResponseDto.createResponse(
                         UserResponseMessage.MODIFY_PREFERENCE.getMessage(),
-                        userService.getOneUserPreferences(Integer.parseInt((String) userIdAndPreferenceIds.get("userId")))
+                        userService.getOneUserPreferences((Integer) userIdAndPreferenceIds.get("userId"))
                 )
         );
     }
