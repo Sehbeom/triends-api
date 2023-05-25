@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class PlanServiceImpl implements PlanService {
@@ -54,13 +53,13 @@ public class PlanServiceImpl implements PlanService {
         // TODO : plan 테이블 삽입
         planMapper.createPlan(planInsertParameter);
 
-        inviteMembers(planDto, (List<String>) planInfo.get("memberInfo"), userId);
+        inviteMembers(planDto, (List<Integer>) planInfo.get("memberInfo"), userId);
         insertDaysAndCourses(planDto, (List<Map<String, Object>>) planInfo.get("courseInfo"));
 
         return planDto.getPlanId();
     }
 
-    private void inviteMembers(PlanDto planDto, List<String> memberInfo, int userId)
+    private void inviteMembers(PlanDto planDto, List<Integer> memberInfo, int userId)
             throws Exception {
         Map<String, Object> memberInviteParameter = makeMemberInviteParameter(planDto, memberInfo,
                 userId);
@@ -71,13 +70,11 @@ public class PlanServiceImpl implements PlanService {
         notificationMapper.sendPlanMemberInvitations(memberInviteParameter);
     }
 
-    private Map<String, Object> makeMemberInviteParameter(PlanDto planDto, List<String> memberInfo,
+    private Map<String, Object> makeMemberInviteParameter(PlanDto planDto, List<Integer> memberInfo,
             int userId) {
         Map<String, Object> memberInsertParameter = new HashMap<>();
         memberInsertParameter.put("planId", planDto.getPlanId());
-        memberInsertParameter.put("receiverIds", memberInfo.stream()
-                .map(Integer::parseInt)
-                .collect(Collectors.toList()));
+        memberInsertParameter.put("receiverIds", memberInfo);
         memberInsertParameter.put("senderId", userId);
 
         return memberInsertParameter;
@@ -119,7 +116,7 @@ public class PlanServiceImpl implements PlanService {
         for (Map<String, Object> oneDay : courseInfo) {
             for (Map<String, Object> oneCourse : (List<Map<String, Object>>) oneDay.get(
                     "courses")) {
-                contentIds.add(Integer.parseInt((String) oneCourse.get("contentId")));
+                contentIds.add((Integer) oneCourse.get("contentId"));
             }
         }
 
@@ -151,7 +148,7 @@ public class PlanServiceImpl implements PlanService {
             throws Exception {
         DayDto dayDto = new DayDto();
         dayDto.setPlanId(planDto.getPlanId());
-        dayDto.setDayInfo(Integer.parseInt((String) oneDay.get("dayInfo")));
+        dayDto.setDayInfo((Integer) oneDay.get("dayInfo"));
 
         // TODO : days 테이블 삽입
         planMapper.createDay(dayDto);
@@ -163,9 +160,9 @@ public class PlanServiceImpl implements PlanService {
             throws Exception {
         CourseDto courseDto = new CourseDto();
         courseDto.setDaysId(dayDto.getDaysId());
-        courseDto.setContentId(Integer.parseInt((String) oneCourse.get("contentId")));
-        courseDto.setStartTime(Integer.parseInt((String) oneCourse.get("startTime")));
-        courseDto.setEndTime(Integer.parseInt((String) oneCourse.get("endTime")));
+        courseDto.setContentId((Integer) oneCourse.get("contentId"));
+        courseDto.setStartTime((Integer) oneCourse.get("startTime"));
+        courseDto.setEndTime((Integer) oneCourse.get("endTime"));
         // TODO : course 테이블 삽입
         planMapper.createCourse(courseDto);
     }

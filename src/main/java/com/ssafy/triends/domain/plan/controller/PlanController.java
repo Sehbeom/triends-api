@@ -76,7 +76,7 @@ public class PlanController {
             throws Exception {
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.CREATE_SUCCESS.getMessage(),
-                        planService.createPlan(userAndPlanAndCourseInfo, Integer.parseInt((String)userAndPlanAndCourseInfo.get("userId")))));
+                        planService.createPlan(userAndPlanAndCourseInfo, (Integer) userAndPlanAndCourseInfo.get("userId"))));
     }
 
     @PostMapping("/member")
