@@ -18,14 +18,31 @@
         <result property="canLike" column="can_like" />
     </resultMap>
 
+    <resultMap id="attractionRateDto" type="attractionRateDto">
+        <result property="ratesId" column="rates_id" />
+        <result property="userId" column="user_id" />
+        <result property="contentId" column="content_id" />
+        <result property="reviewId" column="review_id" />
+    </resultMap>
+
     <resultMap id="reviewWithPlan" type="reviewDto" extends="reviewDto">
         <association property="planInfo" column="plan_id" select="selectForReviewWithPlan" />
+        <collection property="rateInfo" column="review_id" select="selectForRateInfo" />
     </resultMap>
 
     <select id="selectForReviewWithPlan" resultMap="planWithDays">
         select plan_id, title, start_date, end_date, center_lat, center_lng, thumbnail
         from plan
         where plan_id=#{planId}
+    </select>
+
+    <select id="selectForRateInfo" resultMap="attractionRateDto">
+        select ra.rates_id, ra.user_id, ra.content_id, ra.score, ra.review_id
+        from rates ra, review r
+        where
+            r.review_id=#{reviewId} and
+            r.review_id=ra.review_id and
+            r.user_id=ra.user_id
     </select>
 
     <resultMap id="onlyPlan" type="planDto">
@@ -76,12 +93,45 @@
         <association property="attractionDto" column="content_id" select="selectForCourseWithAttraction" />
     </resultMap>
 
-    <select id="selectForCourseWithAttraction" resultType="attractionDto">
-        select content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, readcount, sido_code, gugun_code, latitude, longitude, mlevel
-        from attraction_info
-        where content_id=#{contentId}
-    </select>
+    <resultMap id="onlyAttraction" type="attractionDto">
+        <result property="contentId" column="content_id"/>
+        <result property="contentTypeId" column="content_type_id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="overview" />
+        <result property="addr1" column="addr1"/>
+        <result property="addr2" column="addr2"/>
+        <result property="zipCode" column="zipcode"/>
+        <result property="tel" column="tel"/>
+        <result property="firstImage" column="first_image"/>
+        <result property="firstImage2" column="first_image2"/>
+        <result property="readCount" column="readcount"/>
+        <result property="sidoCode" column="sido_code"/>
+        <result property="gugunCode" column="gugun_code"/>
+        <result property="latitude" column="latitude"/>
+        <result property="longitude" column="longitude"/>
+        <result property="mlevel" column="mlevel"/>
+    </resultMap>
 
+    <select id="selectForCourseWithAttraction" resultMap="onlyAttraction">
+        select
+            ai.content_id,
+            ai.content_type_id,
+            ai.title,
+            ad.overview,
+            ai.addr1,
+            ai.addr2,
+            ai.zipcode,
+            ai.tel,
+            ai.first_image,
+            ai.readcount,
+            ai.sido_code,
+            ai.gugun_code,
+            ai.latitude,
+            ai.longitude,
+            ai.mlevel
+        from attraction_info ai, attraction_description ad
+        where ai.content_id=#{contentId} and ai.content_id=ad.content_id
+    </select>
     
     <resultMap id="listItemOnlyReviewAndPlan" type="reviewListItemDto">
         <result property="reviewId" column="review_id" />
@@ -130,16 +180,26 @@
     </select>
 
     <select id="detailReview" parameterType="map" resultMap="reviewWithPlan">
-        select review_id, subject, content, user_id, plan_id, created_at, modified_at, likes, scrapped
-               <if test="userId != null">
+        select
+            r.review_id,
+            r.subject,
+            r.content,
+            r.user_id,
+            u.name,
+            r.plan_id,
+            r.created_at,
+            r.modified_at,
+            r.likes,
+            r.scrapped
+            <if test="userId != null">
                ,
                case
                    when <include refid="checkLiked" /> = 0 then "true"
                     else "false"
                end as "can_like"
-               </if>
-        from review
-        where review_id=#{reviewId}
+            </if>
+        from review r, users u
+        where review_id=#{reviewId} and r.user_id=u.user_id
     </select>
 
     <sql id="checkLiked">

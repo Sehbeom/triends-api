@@ -23,8 +23,8 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public ReviewDto detailReview(Map<String, Object> userIdAndReviewId) throws Exception {
-		return reviewMapper.detailReview(userIdAndReviewId);
+	public ReviewDto detailReview(Map<String, Object> userIdAndReviewAndWriterId) throws Exception {
+		return reviewMapper.detailReview(userIdAndReviewAndWriterId);
 	}
 
 	@Override

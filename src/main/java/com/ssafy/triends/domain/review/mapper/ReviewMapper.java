@@ -11,7 +11,7 @@ import java.util.Map;
 @Mapper
 public interface ReviewMapper {
 	List<ReviewListItemDto> orderedList(String order) throws SQLException;
-	ReviewDto detailReview(Map<String, Object> userIdAndReviewId) throws SQLException;
+	ReviewDto detailReview(Map<String, Object> userIdAndReviewAndWriterId) throws SQLException;
 	int writeReview(ReviewDto reviewDto) throws SQLException;
 	void increaseReviewLikes(int reviewId) throws SQLException;
 	void decreaseReviewLikes(int reviewId) throws SQLException;

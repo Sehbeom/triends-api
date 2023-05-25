@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface ReviewService {
 	List<ReviewListItemDto> orderedList(String order) throws Exception;
-	ReviewDto detailReview(Map<String, Object> userIdAndReviewId) throws Exception;
+	ReviewDto detailReview(Map<String, Object> userIdAndReviewAndWriterId) throws Exception;
 	int writeReview(ReviewDto reviewDto) throws Exception;
 	void likeReview(Map<String, Object> reviewAndUserId) throws Exception;
 	void unlikeReview(Map<String, Object> reviewAndUserId) throws Exception;

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,4 +29,5 @@ public class ReviewDto {
 	private boolean canLike;
 
 	private PlanDto planInfo;
+	private List<AttractionRateDto> rateInfo;
 }

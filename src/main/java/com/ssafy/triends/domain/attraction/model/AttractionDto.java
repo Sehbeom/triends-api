@@ -1,5 +1,6 @@
 package com.ssafy.triends.domain.attraction.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class AttractionDto {
 	private double latitude;
 	private double longitude;
 	private String mlevel;
+	@JsonProperty(value = "rateAvg")
 	private double rate;
 
 }

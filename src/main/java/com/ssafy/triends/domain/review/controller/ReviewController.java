@@ -50,9 +50,9 @@ public class ReviewController {
 	@GetMapping("/detail")
 	@ApiOperation(value = "리뷰 상세 정보 조회", notes = "리뷰 상세 정보 조회")
 	@ApiImplicitParam(name = "reviewId", value = "조회할 리뷰 아이디", dataTypeClass = Integer.class, defaultValue = "1")
-	public ResponseEntity<?> reviewDetail(@RequestParam Map<String, Object> userIdAndReviewId){
+	public ResponseEntity<?> reviewDetail(@RequestParam Map<String, Object> userIdAndReviewAndWriterId){
 		try {
-			ReviewDto reviewDto=reviewService.detailReview(userIdAndReviewId);
+			ReviewDto reviewDto=reviewService.detailReview(userIdAndReviewAndWriterId);
 			return ResponseEntity.ok(ResponseDto.createResponse(ReviewResponseMessage.GET_REVIEW_DETAIL.getMessage(),reviewDto));
 		} catch (Exception e) {
 			return exceptionHandling(e);
