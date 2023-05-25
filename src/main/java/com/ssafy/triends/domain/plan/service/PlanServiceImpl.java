@@ -74,7 +74,13 @@ public class PlanServiceImpl implements PlanService {
             int userId) {
         Map<String, Object> memberInsertParameter = new HashMap<>();
         memberInsertParameter.put("planId", planDto.getPlanId());
-        memberInsertParameter.put("receiverIds", memberInfo);
+        List<Integer> members = new ArrayList<>();
+        for (int memberId : memberInfo) {
+            if (memberId != userId) {
+                members.add(memberId);
+            }
+        }
+        memberInsertParameter.put("receiverIds", members);
         memberInsertParameter.put("senderId", userId);
 
         return memberInsertParameter;
