@@ -114,19 +114,23 @@ public class PlanServiceImpl implements PlanService {
                 userId);
 
         planMapper.acceptMember(acceptMemberParameter);
-        notificationMapper.sendPlanMemberInvitations(memberInviteParameter);
+        if (memberInviteParameter != null)
+            notificationMapper.sendPlanMemberInvitations(memberInviteParameter);
     }
 
     private Map<String, Object> makeMemberInviteParameter(PlanDto planDto, List<Integer> memberInfo,
             int userId) {
         Map<String, Object> memberInsertParameter = new HashMap<>();
-        memberInsertParameter.put("planId", planDto.getPlanId());
+
         List<Integer> members = new ArrayList<>();
         for (int memberId : memberInfo) {
             if (memberId != userId) {
                 members.add(memberId);
             }
         }
+        if (members.isEmpty())
+            return null;
+        memberInsertParameter.put("planId", planDto.getPlanId());
         memberInsertParameter.put("receiverIds", members);
         memberInsertParameter.put("senderId", userId);
 
