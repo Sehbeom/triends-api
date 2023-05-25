@@ -29,7 +29,8 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	public int writeReview(ReviewDto reviewDto) throws Exception {
-		return reviewMapper.writeReview(reviewDto);
+		reviewMapper.writeReview(reviewDto);
+		return reviewMapper.insertRateAttractionForWriteReview(reviewDto);
 	}
 
 	@Override
@@ -62,5 +63,21 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public void increaseReviewScrapped(int reviewId) throws Exception {
 		reviewMapper.increaseReviewScrapped(reviewId);
+	}
+
+	@Override
+	public int rateAttraction(Map<String, Object> userAndContentAndReviewIdAndScore) throws Exception {
+		if (reviewMapper.getRateOfOneAttraction(userAndContentAndReviewIdAndScore) > 0) {
+			reviewMapper.updateRateAttraction(userAndContentAndReviewIdAndScore);
+		} else {
+			reviewMapper.insertRateAttraction(userAndContentAndReviewIdAndScore);
+		}
+
+		return reviewMapper.getRateOfOneAttraction(userAndContentAndReviewIdAndScore);
+	}
+
+	@Override
+	public void deleteRateAttraction(Map<String, Object> userAndContentAndReviewId) throws Exception {
+		reviewMapper.deleteRateAttraction(userAndContentAndReviewId);
 	}
 }

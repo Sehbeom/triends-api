@@ -16,4 +16,6 @@ public interface ReviewService {
 	void modifyReview(ReviewDto reviewDto) throws Exception;
 	void deleteReview(int reviewId) throws Exception;
 	void increaseReviewScrapped(int reviewId) throws Exception;
+	int rateAttraction(Map<String, Object> userAndContentAndReviewIdAndScore) throws Exception;
+	void deleteRateAttraction(Map<String, Object> userAndContentAndReviewId) throws Exception;
 }

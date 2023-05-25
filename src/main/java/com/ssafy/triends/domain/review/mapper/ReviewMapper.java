@@ -21,4 +21,9 @@ public interface ReviewMapper {
 	void modifyReview(ReviewDto reviewDto) throws SQLException;
 	void deleteReview(int reviewId) throws SQLException;
 	void increaseReviewScrapped(int reviewId) throws SQLException;
+	int getRateOfOneAttraction(Map<String, Object> userAndContentAndReviewId) throws SQLException;
+	void insertRateAttraction(Map<String, Object> userAndContentAndReviewIdAndScore) throws SQLException;
+	int insertRateAttractionForWriteReview(ReviewDto reviewDto) throws SQLException;
+	void updateRateAttraction(Map<String, Object> userAndContentAndReviewIdAndScore) throws SQLException;
+	void deleteRateAttraction(Map<String, Object> userAndContentAndReviewId) throws SQLException;
 }

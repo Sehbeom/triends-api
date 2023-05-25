@@ -16,6 +16,8 @@ public enum ReviewResponseMessage {
     ADD_LIKE_TO_REVIEW("좋아요가 적용되었습니다."),
     UNLIKE_TO_REVIEW("좋아요가 취소되었습니다."),
     INCREASE_REVIEW_SCRAPPED_SUCCESS("리뷰 스크랩 수가 증가되었습니다."),
+    RATE_ATTRACTION_SUCCESS("별점 등록이 완료되었습니다"),
+    CANCEL_RATE_ATTRACTION_SUCCESS("별점 등록이 취소되었습니다"),
     ;
 
     private final String message;

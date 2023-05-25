@@ -167,6 +167,28 @@ public class ReviewController {
 		);
 	}
 
+	@PostMapping("/rate")
+	@LoginRequired
+	public ResponseEntity<ResponseDto<?>> rateAttraction(@RequestBody Map<String, Object> userAndContentAndReviewIdAndScore) throws Exception {
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(
+						ReviewResponseMessage.RATE_ATTRACTION_SUCCESS.getMessage(),
+						reviewService.rateAttraction(userAndContentAndReviewIdAndScore)
+				)
+		);
+	}
+
+	@DeleteMapping("/rate")
+	@LoginRequired
+	public ResponseEntity<ResponseDto<?>> cancelRateAttraction(@RequestParam Map<String, Object> userAndContentAndReviewId) throws Exception {
+		reviewService.deleteRateAttraction(userAndContentAndReviewId);
+		return ResponseEntity.ok(
+				ResponseDto.createResponse(
+						ReviewResponseMessage.CANCEL_RATE_ATTRACTION_SUCCESS.getMessage()
+				)
+		);
+	}
+
 	private ResponseEntity<ResponseDto<?>> exceptionHandling(Exception e) {
 		e.printStackTrace();
 		return (ResponseEntity<ResponseDto<?>>) ResponseEntity.notFound();
