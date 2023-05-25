@@ -92,8 +92,7 @@ public class PlanServiceImpl implements PlanService {
     public void acceptMember(Map<String, Object> userAndNotificationAndPlanId)
             throws Exception {
         planMapper.acceptMember(userAndNotificationAndPlanId);
-        notificationMapper.deleteOneNotification(
-                Integer.parseInt((String) userAndNotificationAndPlanId.get("notificationId")));
+        notificationMapper.deleteOneNotification((Integer) userAndNotificationAndPlanId.get("notificationId"));
     }
 
     @Override

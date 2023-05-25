@@ -38,8 +38,7 @@ public class FriendsServiceImpl implements FriendsService {
         Map<String, Object> acceptFriendParameter = makeAcceptFriendParameter(notificationAndSenderAndUserId);
 
         friendsMapper.acceptFriend(acceptFriendParameter);
-        notificationMapper.deleteOneNotification(
-                Integer.parseInt((String) notificationAndSenderAndUserId.get("notificationId")));
+        notificationMapper.deleteOneNotification((Integer) notificationAndSenderAndUserId.get("notificationId"));
     }
 
     @Override

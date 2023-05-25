@@ -42,16 +42,19 @@
         (user1=#{friendId} and user2=#{userId})
   </delete>
 
-  <select id="getRecommendFriendsFromPreferenceSimilarity" parameterType="list" resultMap="userDto">
+  <select id="getRecommendFriendsFromPreferenceSimilarity" parameterType="map" resultMap="userDto">
     select
     user_id, id, name, tel, profileimg, email
     from users
     where
       (user_id in
-      <foreach collection="similarUserIds" item="similarUserId" open="(" close=")" separator=",">#{similarUserId}
+      <foreach collection="similarUserIds" item="similarUserId" open="(" close=")" separator=",">
+       #{similarUserId}
       </foreach>)
     and
     (user_id not in <include refid="findFriendIds" />)
+    and
+    (user_id not in <include refid="findUsersFromNotification" />)
     order by field(user_id,
                     <foreach collection="similarUserIds" item="similarUserId" separator=",">
                     #{similarUserId}
@@ -59,17 +62,28 @@
     limit 8;
   </select>
 
-  <select id="getRecommendFriendsFromFriendsList" parameterType="list" resultMap="userDto">
+  <select id="getRecommendFriendsFromFriendsList" parameterType="map" resultMap="userDto">
     select
         user_id, id, name, tel, profileimg, email, fc.each_count
     from
         users u,
         <include refid="getFriendIdsAndCount" /> fc
     where
+        (fc.friend_id not in <include refid="findUsersFromNotification" />) and
         u.user_id = fc.friend_id
     order by fc.each_count desc
     limit 8;
   </select>
+
+  <sql id="findUsersFromNotification">
+    (select
+        case
+            when receiver=#{userId} then sender
+            else receiver
+        end as notified_user_id
+    from notification
+    where receiver=#{userId} or sender=#{userId})
+  </sql>
 
   <sql id="getFriendIdsAndCount">
     (select
@@ -94,9 +108,9 @@
         or
         user2 in <include refid="friendsListForeach" />)
       and
-        (user1 != 2
+        (user1 != #{userId}
         and
-        user2 != 2))
+        user2 != #{userId}))
   </sql>
 
   <sql id="friendsListForeach">

@@ -16,5 +16,6 @@ public class NotificationDto {
 	private int sender;
 	private String notificationType;
 	private String additionalInfo;
+	private int planId;
 
 }
