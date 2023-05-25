@@ -5,6 +5,7 @@ import com.ssafy.triends.domain.plan.mapper.PlanMapper;
 import com.ssafy.triends.domain.plan.model.CourseDto;
 import com.ssafy.triends.domain.plan.model.DayDto;
 import com.ssafy.triends.domain.plan.model.PlanDto;
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,52 @@ public class PlanServiceImpl implements PlanService {
         return planDto.getPlanId();
     }
 
+    @Override
+    public int updatePlan(Map<String, Object> planAndCourse, int userId) throws Exception {
+        Map<String, Object> planInfo = (Map<String, Object>) planAndCourse.get("planInfo");
+
+        PlanDto planDto = makePlanDto(planInfo);
+        List<Integer> contentIds = makeContentIds(
+                (List<Map<String, Object>>) planAndCourse.get("courseInfo"));
+        Map<String, Object> planInsertParameter = makePlanInsertParameter(planDto, contentIds);
+        planMapper.createPlan(planInsertParameter);
+
+        insertMembers(planDto, (List<Map<String, Object>>) planAndCourse.get("memberInfo"));
+        insertDaysAndCourses(planDto, (List<Map<String, Object>>) planAndCourse.get("courseInfo"));
+
+        planMapper.delete((Integer) planInfo.get("planId"));
+        notificationMapper.deleteNotificationByPlanId((Integer) planInfo.get("planId"));
+
+        return planDto.getPlanId();
+    }
+
+    @Override
+    public void acceptMember(Map<String, Object> userAndNotificationAndPlanId)
+            throws Exception {
+        planMapper.acceptMember(userAndNotificationAndPlanId);
+        notificationMapper.deleteOneNotification((Integer) userAndNotificationAndPlanId.get("notificationId"));
+    }
+
+    @Override
+    public List<DayDto> getRecommendPlans(Map<String, Object> latLngInfo) throws Exception {
+        return planMapper.getRecommendPlans(latLngInfo);
+    }
+
+    private void insertMembers(PlanDto planDto, List<Map<String, Object>> memberInfo)
+            throws Exception {
+        Map<String, Object> insertMembersParameter = new HashMap<>();
+        insertMembersParameter.put("planId", planDto.getPlanId());
+
+        List<Integer> memberIds = new ArrayList<>();
+        for (Map<String, Object> member : memberInfo) {
+            memberIds.add((Integer) member.get("userId"));
+        }
+
+        insertMembersParameter.put("memberIds", memberIds);
+
+        planMapper.insertMembers(insertMembersParameter);
+    }
+
     private void inviteMembers(PlanDto planDto, List<Integer> memberInfo, int userId)
             throws Exception {
         Map<String, Object> memberInviteParameter = makeMemberInviteParameter(planDto, memberInfo,
@@ -92,18 +139,6 @@ public class PlanServiceImpl implements PlanService {
         acceptMemberParameter.put("userId", userId);
 
         return acceptMemberParameter;
-    }
-
-    @Override
-    public void acceptMember(Map<String, Object> userAndNotificationAndPlanId)
-            throws Exception {
-        planMapper.acceptMember(userAndNotificationAndPlanId);
-        notificationMapper.deleteOneNotification((Integer) userAndNotificationAndPlanId.get("notificationId"));
-    }
-
-    @Override
-    public List<DayDto> getRecommendPlans(Map<String, Object> latLngInfo) throws Exception {
-        return planMapper.getRecommendPlans(latLngInfo);
     }
 
     private PlanDto makePlanDto(Map<String, Object> plan) {
@@ -171,6 +206,5 @@ public class PlanServiceImpl implements PlanService {
         // TODO : course 테이블 삽입
         planMapper.createCourse(courseDto);
     }
-
 
 }

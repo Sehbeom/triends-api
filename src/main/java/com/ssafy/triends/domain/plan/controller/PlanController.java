@@ -79,6 +79,14 @@ public class PlanController {
                         planService.createPlan(userAndPlanAndCourseInfo, (Integer) userAndPlanAndCourseInfo.get("userId"))));
     }
 
+    @PutMapping("")
+    @LoginRequired
+    public ResponseEntity<ResponseDto<?>> update(@RequestBody Map<String, Object> userAndPlanAndCourseInfo) throws Exception {
+        return ResponseEntity.ok(
+                ResponseDto.createResponse(PlanResponseMessage.UPDATE_SUCCESS.getMessage(),
+                        planService.updatePlan(userAndPlanAndCourseInfo, (Integer) userAndPlanAndCourseInfo.get("userId"))));
+    }
+
     @PostMapping("/member")
     @LoginRequired
     @ApiOperation(value = "멤버 초대 수락", notes = "멤버 초대 요청을 수락한다. (로그인 필요)")

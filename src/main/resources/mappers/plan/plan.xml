@@ -187,4 +187,12 @@
             (p.plan_id=r.plan_id)
         order by r.likes desc;
     </select>
+
+    <insert id="insertMembers" parameterType="map">
+        insert into members (plan_id, user_id)
+        values
+            <foreach collection="memberIds" item="memberId" separator=",">
+                (#{planId}, #{memberId})
+            </foreach>
+    </insert>
 </mapper>
