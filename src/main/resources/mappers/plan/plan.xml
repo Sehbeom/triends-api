@@ -167,8 +167,17 @@
     </insert>
 
     <insert id="createCourse" parameterType="courseDto">
-        insert into course (days_id, content_id, start_time, end_time)
-        values (#{daysId}, #{contentId}, #{startTime}, #{endTime})
+        insert into course
+            (days_id, content_id
+        <if test="startTime != null and endTime != null">
+            , start_time, end_time
+        </if>
+        )
+        values (#{daysId}, #{contentId}
+        <if test="startTime != null and endTime != null">
+            , #{startTime}, #{endTime}
+        </if>
+        )
     </insert>
 
     <insert id="acceptMember" parameterType="map">

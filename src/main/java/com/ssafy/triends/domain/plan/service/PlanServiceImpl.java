@@ -201,8 +201,10 @@ public class PlanServiceImpl implements PlanService {
         CourseDto courseDto = new CourseDto();
         courseDto.setDaysId(dayDto.getDaysId());
         courseDto.setContentId((Integer) oneCourse.get("contentId"));
-        courseDto.setStartTime((Integer) oneCourse.get("startTime"));
-        courseDto.setEndTime((Integer) oneCourse.get("endTime"));
+        if (oneCourse.get("startTime") != null && oneCourse.get("endTime") != null) {
+            courseDto.setStartTime((Integer) oneCourse.get("startTime"));
+            courseDto.setEndTime((Integer) oneCourse.get("endTime"));
+        }
         // TODO : course 테이블 삽입
         planMapper.createCourse(courseDto);
     }
