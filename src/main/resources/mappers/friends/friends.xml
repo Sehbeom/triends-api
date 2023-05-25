@@ -118,4 +118,11 @@
       #{friend.userId}
     </foreach>
   </sql>
+
+  <select id="searchFriendByName" resultMap="userDto" parameterType="map">
+    select user_id, id, name, tel, profileimg, email
+    from users
+    where name like concat('%', #{keyword}, '%') and user_id != #{userId}
+    order by name
+  </select>
 </mapper>

@@ -99,6 +99,17 @@ public class FriendsController {
         }
     }
 
+    @GetMapping("/search")
+    @LoginRequired
+    public ResponseEntity<ResponseDto<?>> searchFriend(@RequestParam Map<String, Object> keywordAndUserId) throws Exception {
+        return ResponseEntity.ok(
+                ResponseDto.createResponse(
+                        FriendsResponseMessage.SEARCH_FRIEND_SUCCESS.getMessage(),
+                        friendsService.searchFriendByName(keywordAndUserId)
+                )
+        );
+    }
+
     private ResponseEntity<ResponseDto<?>> getResponseOfSimilarityRecommendList(int userId)
             throws Exception {
         return ResponseEntity.ok(
