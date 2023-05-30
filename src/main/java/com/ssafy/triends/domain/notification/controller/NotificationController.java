@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/notification")
-@Api(tags = {"알림 관리"})
+@Api(tags = {"Notification"})
 public class NotificationController {
 
     private final Logger logger = LoggerFactory.getLogger(NotificationController.class);
@@ -31,8 +31,8 @@ public class NotificationController {
     @PostMapping("/plan")
     @LoginRequired
     @ApiOperation(value = "플랜 멤버 초대 전송", notes = "플랜 멤버 초대 알림을 전송한다. (로그인 필요)")
-    @ApiImplicitParam(name = "receiverAndPlanId",
-            value = "초대할 멤버(receiver)의 아이디와 플랜 아이디",
+    @ApiImplicitParam(name = "receiverAndPlanAndUserId",
+            value = "userId : 로그인한 유저의 pk \n receiverId : 초대를 보낼 유저의 pk \n planId : 초대할 플랜의 pk",
             dataTypeClass = Map.class,
             defaultValue = "{\"userId\":2,\"receiverId\":5,\"planId\":3}")
     public ResponseEntity<ResponseDto<?>> sendPlanNotification(
@@ -46,10 +46,10 @@ public class NotificationController {
     @PostMapping("/friend")
     @LoginRequired
     @ApiOperation(value = "친구 추가 요청 전송", notes = "친구 요청 알림을 전송한다. (로그인 필요)")
-    @ApiImplicitParam(name = "receiverId",
-            value = "친구 추가 요청을 보낼 사용자의 아이디",
-            dataTypeClass = Integer.class,
-            defaultValue = "5")
+    @ApiImplicitParam(name = "receiverAndUserId",
+            value = "userId : 로그인한 유저의 pk \n receiverId : 요청을 보낼 유저의 pk",
+            dataTypeClass = Map.class,
+            defaultValue = "{\"userId\":2,\"receiverId\":5}")
     public ResponseEntity<ResponseDto<?>> sendFriendNotification(@RequestBody Map<String, Object> receiverAndUserId)
             throws Exception {
         notificationService.sendFriendRequest(receiverAndUserId);
@@ -61,6 +61,7 @@ public class NotificationController {
     @GetMapping("")
     @LoginRequired
     @ApiOperation(value = "알림 목록 조회", notes = "현재 로그인한 사용자가 수신한 알림을 조회한다. (로그인 필요)")
+    @ApiImplicitParam(name = "userId", value = "로그인한 유저의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
     public ResponseEntity<ResponseDto<?>> getAllNotifications(int userId)
             throws Exception {
         return ResponseEntity.ok(ResponseDto.createResponse(
@@ -72,8 +73,8 @@ public class NotificationController {
     @LoginRequired
     @ApiOperation(value = "알림 삭제", notes = "선택한 알림을 삭제한다. (로그인 필요)")
     @ApiImplicitParam(name = "notificationId",
-            value = "삭제할 아이디",
-            dataTypeClass = String.class,
+            value = "삭제할 알림의 pk",
+            dataTypeClass = Integer.class,
             defaultValue = "5")
     public ResponseEntity<ResponseDto<?>> deleteOneNotification(int notificationId) throws Exception {
         notificationService.deleteOneNotification(notificationId);

@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/attraction")
-@Api(tags = {"여행지"})
+@Api(tags = {"Attraction"})
 public class AttractionController {
 
     private final Logger logger = LoggerFactory.getLogger(AttractionController.class);
@@ -62,7 +62,8 @@ public class AttractionController {
 
     @GetMapping("/recommend")
     @LoginRequired
-    @ApiOperation(value="여행지 추천 - 취향 기반", notes = "로그인한 사용자의 취향에 적합한 여행지 추천 목록을 조회한다. (로그인 필요)")
+    @ApiOperation(value="여행지 추천 - 취향 기반", notes = "로그인한 사용자의 취향에 적합한 여행지 추천 목록을 조회한다.")
+    @ApiImplicitParam(name = "userId", value = "로그인한 유저의 pk", required = true, dataTypeClass = Integer.class, defaultValue = "2")
     public ResponseEntity<ResponseDto<?>> getRecommendAttractions(@RequestParam int userId)
             throws Exception {
         return ResponseEntity.ok(ResponseDto.createResponse(
@@ -73,7 +74,10 @@ public class AttractionController {
 
     @GetMapping("/best")
     @ApiOperation(value = "여행지 추천 - 평점 기반", notes = "지도 상에서 평점 기준 내림차순된 여행지 추천 목록을 조회한다.")
-    @ApiImplicitParam(name = "latLngInfo", value = "swLat, swLng, neLat, neLng 값 전달 필요", dataTypeClass = Map.class, defaultValue = "{\"swLat\":35.0,\"swLng\":129.0,\"neLat\":36.0,\"neLng\":130.0}")
+    @ApiImplicitParam(name = "latLngInfo",
+            value = "swLat : 지도의 남서쪽 모서리 lat \n swLng : 지도의 남서쪽 모서리 lng \n neLat : 지도의 북동쪽 모서리 lat \n neLng : 지도의 북동쪽 모서리 lng" ,
+            dataTypeClass = Map.class,
+            defaultValue = "{\"swLat\":35.0,\"swLng\":129.0,\"neLat\":36.0,\"neLng\":130.0}")
     public ResponseEntity<ResponseDto<?>> getBestAttractions(
             @RequestParam Map<String, Object> latLngInfo
     ) throws Exception {

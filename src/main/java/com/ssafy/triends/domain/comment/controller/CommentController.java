@@ -5,6 +5,7 @@ import com.ssafy.triends.domain.comment.model.CommentDto;
 import com.ssafy.triends.domain.comment.service.CommentService;
 import com.ssafy.triends.global.dto.ResponseDto;
 import com.ssafy.triends.global.interceptor.LoginRequired;
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 
 @RestController
 @RequestMapping("/comment")
+@Api(tags = {"Comment"})
 public class CommentController extends HttpServlet {
 	private final Logger logger = LoggerFactory.getLogger(CommentController.class);
 	

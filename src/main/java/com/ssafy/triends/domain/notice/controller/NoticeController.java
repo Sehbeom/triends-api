@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/notice")
-@Api(tags = {"공지사항 관리"})
+@Api(tags = {"Notice"})
 public class NoticeController {
 
     private final Logger logger = LoggerFactory.getLogger(NoticeController.class);
@@ -50,10 +51,10 @@ public class NoticeController {
     @PostMapping("")
     @LoginRequired
     @ApiOperation(value = "공지글 작성", notes = "공지글을 작성한다.")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "subject", value = "공지글 제목", dataTypeClass = String.class, defaultValue = "제목", required = true),
-            @ApiImplicitParam(name = "content", value = "공지글 내용", dataTypeClass = String.class, defaultValue = "내용", required = true),
-    })
+    @ApiImplicitParam(name = "noticeDto",
+            value = "userId : 작성자 pk \n subject : 공지사항 제목 \n content : 공지사항 내용" ,
+            dataTypeClass = NoticeDto.class,
+            defaultValue = "{\"userId\":3,\"subject\":\"제목\",\"content\":\"내용\"}")
     public ResponseEntity<ResponseDto<?>> registerOneNotice(@RequestBody NoticeDto noticeDto)
             throws Exception {
         noticeService.register(noticeDto);
@@ -68,10 +69,10 @@ public class NoticeController {
     @PutMapping("")
     @LoginRequired
     @ApiOperation(value = "공지글 수정", notes = "공지글을 수정한다.")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "subject", value = "공지글 제목", dataTypeClass = String.class, defaultValue = "제목"),
-            @ApiImplicitParam(name = "content", value = "공지글 내용", dataTypeClass = String.class, defaultValue = "내용"),
-    })
+    @ApiImplicitParam(name = "noticeDto",
+            value = "subject : 공지사항 제목 \n content : 공지사항 내용" ,
+            dataTypeClass = NoticeDto.class,
+            defaultValue = "{\"subject\":\"제목\",\"content\":\"내용\"}")
     public ResponseEntity<ResponseDto<?>> modifyOneNotice(@RequestBody NoticeDto noticeDto)
             throws Exception {
         noticeService.modify(noticeDto);

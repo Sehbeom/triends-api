@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/plan")
-@Api(tags = {"플랜 관리"})
+@Api(tags = {"Plan"})
 public class PlanController {
 
     private final Logger logger = LoggerFactory.getLogger(PlanController.class);
@@ -29,7 +29,7 @@ public class PlanController {
 
     @GetMapping("")
     @LoginRequired
-    @ApiOperation(value = "플랜 추천 목록 조회", notes = "지도 상에 포함되는 플랜 추천 목록 조회 (로그인 필요)")
+    @ApiOperation(value = "플랜 추천 목록 조회", notes = "지도 상에 포함되는 플랜 추천 목록 조회")
     @ApiImplicitParam(name = "latLngInfo", value = "swLat, swLng, neLat, neLng 값 전달 필요", dataTypeClass = Map.class, defaultValue = "{\"swLat\":35.0,\"swLng\":129.0,\"neLat\":36.0,\"neLng\":130.0}")
     public ResponseEntity<ResponseDto<?>> getRecommendPlans(@RequestParam Map<String, Object> latLngInfo) throws Exception {
         return ResponseEntity.ok(
@@ -39,7 +39,8 @@ public class PlanController {
 
     @GetMapping("/list")
     @LoginRequired
-    @ApiOperation(value = "나의 플랜 목록 조회", notes = "사용자가 멤버로 참여 중인 플랜 목록 조회 (로그인 필요)")
+    @ApiOperation(value = "나의 플랜 목록 조회", notes = "사용자가 멤버로 참여 중인 플랜 목록 조회")
+    @ApiImplicitParam(name = "userId", value = "로그인한 유저의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
     public ResponseEntity<ResponseDto<?>> list(int userId) throws Exception {
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.SEARCH_MY_PLANS_SUCCESS.getMessage(),
@@ -49,7 +50,7 @@ public class PlanController {
     @GetMapping("/{planId}")
     @LoginRequired
     @ApiOperation(value = "플랜 상세 정보 조회", notes = "플랜 상세 정보 조회 (로그인 필요)")
-    @ApiImplicitParam(name = "planId", value = "조회할 플랜 아이디", defaultValue = "1", dataTypeClass = Integer.class)
+    @ApiImplicitParam(name = "planId", value = "조회할 플랜의 pk", defaultValue = "1", dataTypeClass = Integer.class)
     public ResponseEntity<ResponseDto<?>> detail(@PathVariable("planId") int planId)
             throws Exception {
         return ResponseEntity.ok(
@@ -60,7 +61,7 @@ public class PlanController {
     @DeleteMapping("/{planId}")
     @LoginRequired
     @ApiOperation(value = "플랜 삭제", notes = "플랜 삭제 (로그인 필요)")
-    @ApiImplicitParam(name = "planId", value = "삭제할 플랜 아이디", defaultValue = "1", dataTypeClass = Integer.class)
+    @ApiImplicitParam(name = "planId", value = "삭제할 플랜의 pk", defaultValue = "1", dataTypeClass = String.class)
     public ResponseEntity<ResponseDto<?>> delete(@PathVariable("planId") String planId)
             throws Exception {
         planService.delete(Integer.parseInt(planId));
@@ -71,7 +72,7 @@ public class PlanController {
     @PostMapping("/create")
     @LoginRequired
     @ApiOperation(value = "플랜 생성", notes = "플랜 생성 (로그인 필요)")
-    @ApiImplicitParam(name = "planAndCourseInfo", value = "플랜 및 일자별 코스 정보 전달 필요 (포맷은 노션 참고)", dataTypeClass = Map.class)
+    @ApiImplicitParam(name = "userAndPlanAndCourseInfo", value = "플랜 및 일자별 코스 정보 전달 필요 (포맷은 Postman 참고)", dataTypeClass = Map.class)
     public ResponseEntity<ResponseDto<?>> create(@RequestBody Map<String, Object> userAndPlanAndCourseInfo)
             throws Exception {
         return ResponseEntity.ok(
@@ -81,6 +82,7 @@ public class PlanController {
 
     @PutMapping("")
     @LoginRequired
+    @ApiImplicitParam(name = "userAndPlanAndCourseInfo", value = "플랜 및 일자별 코스 정보 전달 필요 (포맷은 Postman 참고)", dataTypeClass = Map.class)
     public ResponseEntity<ResponseDto<?>> update(@RequestBody Map<String, Object> userAndPlanAndCourseInfo) throws Exception {
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.UPDATE_SUCCESS.getMessage(),
@@ -90,10 +92,10 @@ public class PlanController {
     @PostMapping("/member")
     @LoginRequired
     @ApiOperation(value = "멤버 초대 수락", notes = "멤버 초대 요청을 수락한다. (로그인 필요)")
-    @ApiImplicitParam(name = "notificationAndPlanId",
-            value = "멤버 초대 알림 아이디 및 플랜 아이디",
+    @ApiImplicitParam(name = "userAndNotificationAndPlanId",
+            value = "userId : 로그인한 유저의 pk \n notificationId : 해당 알림의 pk \n planId : 수락할 플랜의 pk",
             dataTypeClass = Map.class,
-            defaultValue = "{\"notificationId\":5,\"planId\":3}")
+            defaultValue = "{\"userId\":2,\"notificationId\":5,\"planId\":3}")
     public ResponseEntity<ResponseDto<?>> memberAccept(@RequestBody Map<String, Object> userAndNotificationAndPlanId)
             throws Exception {
         planService.acceptMember(userAndNotificationAndPlanId);
