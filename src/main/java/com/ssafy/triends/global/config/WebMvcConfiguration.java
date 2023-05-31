@@ -1,6 +1,6 @@
 package com.ssafy.triends.global.config;
 
-import com.ssafy.triends.global.interceptor.AuthenticationInterceptor;
+import com.ssafy.triends.global.interceptor.AuthorizationInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -10,15 +10,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @MapperScan(basePackages = {"com.ssafy.triends.**.mapper"})
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
-    AuthenticationInterceptor authenticationInterceptor;
+    AuthorizationInterceptor authorizationInterceptor;
 
-    public WebMvcConfiguration(AuthenticationInterceptor authenticationInterceptor) {
-        this.authenticationInterceptor = authenticationInterceptor;
+    public WebMvcConfiguration(AuthorizationInterceptor authorizationInterceptor) {
+        this.authorizationInterceptor = authorizationInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(this.authenticationInterceptor)
+        registry.addInterceptor(this.authorizationInterceptor)
                 .addPathPatterns("/**");
     }
 }

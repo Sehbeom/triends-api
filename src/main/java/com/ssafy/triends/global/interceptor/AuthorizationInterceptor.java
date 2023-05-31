@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 @Component
-public class AuthenticationInterceptor implements HandlerInterceptor {
+public class AuthorizationInterceptor implements HandlerInterceptor {
 
     private JwtOperator jwtOperator;
 
-    public AuthenticationInterceptor(JwtOperator jwtOperator) {
+    public AuthorizationInterceptor(JwtOperator jwtOperator) {
         this.jwtOperator = jwtOperator;
     }
 

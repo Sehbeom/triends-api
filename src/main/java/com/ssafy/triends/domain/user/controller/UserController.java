@@ -220,10 +220,10 @@ public class UserController {
         );
     }
 
-    @GetMapping("/authorization")
+    @GetMapping("/authentication")
     @ApiOperation(value = "access token 유효성 검사", notes = "access token 유효성 검사")
     @ApiImplicitParam(name = "userId", value = "로그인 한 유저의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
-    public ResponseEntity<ResponseDto<?>> authorization(int userId, @ApiIgnore HttpServletRequest request) throws Exception {
+    public ResponseEntity<ResponseDto<?>> authentication(int userId, @ApiIgnore HttpServletRequest request) throws Exception {
         String accessToken = request.getHeader("access-token");
         if (accessToken == null) {
             return ResponseEntity.accepted().body(ResponseDto.createResponse(ExceptionMessage.USERINFO_NOT_FOUND.getMessage()));
@@ -242,7 +242,7 @@ public class UserController {
         return ResponseEntity.accepted().body(ResponseDto.createResponse(ExceptionMessage.TOKEN_EXPIRED.getMessage()));
     }
 
-    @GetMapping("/authorization/refresh")
+    @GetMapping("/authentication/reissue")
     @ApiOperation(value = "access token 재발급", notes = "refresh token 유효성 검사 후 재발급")
     @ApiImplicitParam(name = "userId", value = "로그인 한 유저의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
     public ResponseEntity<ResponseDto<?>> reissueAccessToken(int userId, @ApiIgnore HttpServletRequest request) throws Exception {
@@ -253,7 +253,7 @@ public class UserController {
         }
 
         String originRefreshToken = userService.getRefreshToken(userId);
-        if (originRefreshToken.equals(refreshToken)) {
+        if (refreshToken.equals(originRefreshToken)) {
             UserDto userDto = userService.getUser(userId);
             String accessToken = jwtOperator.createAccessToken("userId", userId);
 
