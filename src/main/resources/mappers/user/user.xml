@@ -42,11 +42,6 @@
 		where id=#{userId} and password=#{userPwd}
 	</select>
 	
-	<select id="userList" resultMap="userDto">
-		select user_id, id, password, name, tel, profileimg, email, admin
-		from users
-	</select>
-	
 	<insert id="joinUser" parameterType="userDto" useGeneratedKeys="true" keyProperty="userId">
 		insert into users (id, password, name, tel, profileimg, email) values
 		(#{id}, #{password}, #{name}, #{tel}, #{profileimg}, #{email})
@@ -63,16 +58,6 @@
 		set password=#{password}, name=#{name}, tel=#{tel}, profileimg=#{profileimg}, email=#{email}
 		where user_id=#{userId}
 	</update>
-
-	<select id="getComment" parameterType="int" resultMap="commentDto">
-		select comment_id, review_id, user_id, name, content from comment
-		where user_id=#{userId};
-	</select>
-
-	<delete id="deleteComment" parameterType="int">
-		delete from comment
-		where comment_id=#{commentId};
-	</delete>
 
 	<select id="getOneUserPreferences" resultMap="userPreferenceMap" parameterType="int">
 		select user_id

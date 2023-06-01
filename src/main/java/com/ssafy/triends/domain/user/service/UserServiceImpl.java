@@ -23,11 +23,6 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public int idCheck(String userId) throws Exception {
-		return userMapper.idCheck(userId);
-	}
-
-	@Override
 	public int joinUser(UserDto userDto) throws Exception {
 		return userMapper.joinUser(userDto);
 	}
@@ -35,26 +30,6 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public UserDto loginUser(Map<String, String> map) throws Exception {
 		return userMapper.loginUser(map);
-	}
-
-	@Override
-	public int changePwd(Map<String, String> map) throws Exception {
-		return userMapper.changePwd(map);
-	}
-
-	@Override
-	public int checkIdEmail(Map<String, String> map) throws Exception {
-		return userMapper.checkIdEmail(map);
-	}
-
-	@Override
-	public int resetPwd(Map<String, String> map) throws Exception {
-		return userMapper.resetPwd(map);
-	}
-
-	@Override
-	public List<UserDto> userList() throws Exception {
-		return userMapper.userList();
 	}
 
 	@Override
@@ -66,17 +41,6 @@ public class UserServiceImpl implements UserService{
 	public UserDto getUser(int userId) throws Exception {
 		return userMapper.getUser(userId);
 	}
-
-	@Override
-	public List<CommentDto> getComment(int userId) throws Exception {
-		return userMapper.getComment(userId);
-	}
-
-	
-	 @Override
-	 public int deleteComment(int commentId) throws Exception {
-		 return userMapper.deleteComment(commentId);
-	 }
 
 	@Override
 	public int registPreferences(Map<String, Object> userIdAndPreferenceIds) throws Exception {

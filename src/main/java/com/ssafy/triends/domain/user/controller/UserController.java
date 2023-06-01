@@ -67,8 +67,8 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    @ApiOperation(value = "로그아웃", notes = "로그아웃")
     @LoginRequired
+    @ApiOperation(value = "로그아웃 (LoginRequired)", notes = "로그아웃")
     @ApiImplicitParam(name = "userId", value = "로그아웃 할 유저의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
     public ResponseEntity<ResponseDto<?>> logoutUser(int userId) throws Exception {
         userService.removeRefreshToken(userId);
@@ -77,7 +77,7 @@ public class UserController {
 
     @GetMapping
     @LoginRequired
-    @ApiOperation(value = "유저 정보 조회", notes = "유저 정보 조회")
+    @ApiOperation(value = "유저 정보 조회 (LoginRequired)", notes = "유저 정보 조회")
     @ApiImplicitParam(name = "userId", value = "정보를 얻어 올 유저의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
     public ResponseEntity<ResponseDto<?>> getUser(int userId) throws Exception {
         return ResponseEntity.ok(
@@ -113,7 +113,7 @@ public class UserController {
 
     @PutMapping
     @LoginRequired
-    @ApiOperation(value = "유저 정보 수정", notes = "유저 정보 수정")
+    @ApiOperation(value = "유저 정보 수정 (LoginRequired)", notes = "유저 정보 수정")
     @ApiImplicitParam(name = "userDto",
             value = "userId : 수정할 유저의 pk \n password : 비밀번호 \n name : 이름 \n tel : 전화번호 \n profileimg : 프로필 사진 경로 \n email : 이메일",
             dataTypeClass = Map.class,
@@ -129,35 +129,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("/comment")
-    @LoginRequired
-    @ApiOperation(value = "댓글 조회", notes = "로그인 한 유저가 작성한 댓글 목록 조회")
-    @ApiImplicitParam(name = "userId", value = "댓글을 조회할 유저의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
-    public ResponseEntity<?> getComment(int userId) {
-        try {
-            List<CommentDto> list = userService.getComment(userId);
-            return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.GET_USER_COMMENT.getMessage(), list));
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
-    @DeleteMapping("/comment/{commentId}")
-    @LoginRequired
-    @ApiOperation(value = "댓글 삭제", notes = "로그인 한 유저가 작성한 댓글 삭제")
-    @ApiImplicitParam(name = "commentId", value = "삭제할 댓글의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
-    public ResponseEntity<?> deleteComment(@PathVariable("commentId") int commentId) {
-        try {
-            userService.deleteComment(commentId);
-            return ResponseEntity.ok(ResponseDto.createResponse(UserResponseMessage.DELETE_USER_COMMENT.getMessage(), commentId));
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
     @GetMapping("/preference")
     @LoginRequired
-    @ApiOperation(value = "취향 조회", notes = "로그인 한 유저가 선택한 취향 목록 조회")
+    @ApiOperation(value = "취향 조회 (LoginRequired)", notes = "로그인 한 유저가 선택한 취향 목록 조회")
     @ApiImplicitParam(name = "userId", value = "취향을 조회할 유저의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
     public ResponseEntity<ResponseDto<?>> getPreferences(int userId) throws Exception {
         return ResponseEntity.ok(
@@ -170,7 +144,7 @@ public class UserController {
 
     @PostMapping("/preference")
     @LoginRequired
-    @ApiOperation(value = "취향 등록", notes = "로그인 한 유저의 취향 목록 등록")
+    @ApiOperation(value = "취향 등록 (LoginRequired)", notes = "로그인 한 유저의 취향 목록 등록")
     @ApiImplicitParam(name = "userIdAndPreferenceIds",
             value = "userId : 취향을 등록할 유저의 pk \n preferenceIds : 선택된 취향의 pk 배열 ",
             dataTypeClass = Map.class,
@@ -189,7 +163,7 @@ public class UserController {
 
     @PutMapping("/preference")
     @LoginRequired
-    @ApiOperation(value = "취향 수정", notes = "로그인 한 유저의 취향 목록 수정")
+    @ApiOperation(value = "취향 수정 (LoginRequired)", notes = "로그인 한 유저의 취향 목록 수정")
     @ApiImplicitParam(name = "userIdAndPreferenceIds",
             value = "userId : 취향을 수정할 유저의 pk \n preferenceIds : 선택된 취향의 pk 배열 ",
             dataTypeClass = Map.class,
@@ -208,7 +182,7 @@ public class UserController {
 
     @DeleteMapping("/preference")
     @LoginRequired
-    @ApiOperation(value = "취향 리셋", notes = "로그인 한 유저의 취향 목록 리셋")
+    @ApiOperation(value = "취향 리셋 (LoginRequired)", notes = "로그인 한 유저의 취향 목록 리셋")
     @ApiImplicitParam(name = "userId", value = "취향을 리셋할 유저의 pk", required = true, dataTypeClass = Integer.class, defaultValue = "2")
     public ResponseEntity<ResponseDto<?>> deletePreferences(int userId) {
         userService.deletePreference(userId);
