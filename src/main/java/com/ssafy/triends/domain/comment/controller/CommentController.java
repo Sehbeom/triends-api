@@ -6,6 +6,7 @@ import com.ssafy.triends.domain.comment.service.CommentService;
 import com.ssafy.triends.global.dto.ResponseDto;
 import com.ssafy.triends.global.interceptor.LoginRequired;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class CommentController extends HttpServlet {
 	}
 
 	@GetMapping("/review")
+	@ApiOperation(value="리뷰 내 모든 댓글 조회", notes = "하나의 리뷰 내 모든 댓글을 조회한다.")
 	public ResponseEntity<ResponseDto<?>> getAllCommentsOfOneReview(int reviewId) throws Exception {
 		return ResponseEntity.ok(
 				ResponseDto.createResponse(
@@ -37,6 +39,7 @@ public class CommentController extends HttpServlet {
 
 	@GetMapping("/user")
 	@LoginRequired
+	@ApiOperation(value="유저가 작성한 모든 댓글 조회 (LoginRequired)", notes = "현재 로그인한 유저가 작성한 모든 댓글을 조회한다.")
 	public ResponseEntity<ResponseDto<?>> getAllCommentsOfOneUser(int userId) throws Exception {
 		return ResponseEntity.ok(
 				ResponseDto.createResponse(
@@ -48,6 +51,7 @@ public class CommentController extends HttpServlet {
 
 	@PostMapping
 	@LoginRequired
+	@ApiOperation(value="댓글 작성 (LoginRequired)", notes = "댓글을 작성한다.")
 	public ResponseEntity<ResponseDto<?>> registOneComment(@RequestBody CommentDto commentDto) throws Exception {
 		commentService.registOneComment(commentDto);
 
@@ -61,6 +65,7 @@ public class CommentController extends HttpServlet {
 
 	@DeleteMapping
 	@LoginRequired
+	@ApiOperation(value="댓글 삭제 (LoginRequired)", notes = "댓글을 삭제한다.")
 	public ResponseEntity<ResponseDto<?>> deleteOneComment(int commentId) throws Exception {
 		commentService.deleteOneComment(commentId);
 

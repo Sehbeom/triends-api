@@ -50,7 +50,7 @@ public class NoticeController {
 
     @PostMapping("")
     @LoginRequired
-    @ApiOperation(value = "공지글 작성", notes = "공지글을 작성한다.")
+    @ApiOperation(value = "공지글 작성 (LoginRequired)", notes = "공지글을 작성한다.")
     @ApiImplicitParam(name = "noticeDto",
             value = "userId : 작성자 pk \n subject : 공지사항 제목 \n content : 공지사항 내용" ,
             dataTypeClass = NoticeDto.class,
@@ -68,7 +68,7 @@ public class NoticeController {
 
     @PutMapping("")
     @LoginRequired
-    @ApiOperation(value = "공지글 수정", notes = "공지글을 수정한다.")
+    @ApiOperation(value = "공지글 수정 (LoginRequired)", notes = "공지글을 수정한다.")
     @ApiImplicitParam(name = "noticeDto",
             value = "subject : 공지사항 제목 \n content : 공지사항 내용" ,
             dataTypeClass = NoticeDto.class,
@@ -86,7 +86,7 @@ public class NoticeController {
 
     @DeleteMapping("/{noticeId}")
     @LoginRequired
-    @ApiOperation(value = "공지글 삭제", notes = "공지글을 삭제한다.")
+    @ApiOperation(value = "공지글 삭제 (LoginRequired)", notes = "공지글을 삭제한다.")
     @ApiImplicitParam(name = "noticeId", value = "삭제할 공지글 아이디", dataTypeClass = Integer.class, defaultValue = "1")
     public ResponseEntity<ResponseDto<?>> deleteOneNotice(@PathVariable("noticeId") int noticeId)
             throws Exception {

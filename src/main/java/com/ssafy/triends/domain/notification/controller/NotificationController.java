@@ -30,7 +30,7 @@ public class NotificationController {
 
     @PostMapping("/plan")
     @LoginRequired
-    @ApiOperation(value = "플랜 멤버 초대 전송", notes = "플랜 멤버 초대 알림을 전송한다. (로그인 필요)")
+    @ApiOperation(value = "플랜 멤버 초대 전송 (LoginRequired)", notes = "플랜 멤버 초대 알림을 전송한다.")
     @ApiImplicitParam(name = "receiverAndPlanAndUserId",
             value = "userId : 로그인한 유저의 pk \n receiverId : 초대를 보낼 유저의 pk \n planId : 초대할 플랜의 pk",
             dataTypeClass = Map.class,
@@ -45,7 +45,7 @@ public class NotificationController {
 
     @PostMapping("/friend")
     @LoginRequired
-    @ApiOperation(value = "친구 추가 요청 전송", notes = "친구 요청 알림을 전송한다. (로그인 필요)")
+    @ApiOperation(value = "친구 추가 요청 전송 (LoginRequired)", notes = "친구 요청 알림을 전송한다.")
     @ApiImplicitParam(name = "receiverAndUserId",
             value = "userId : 로그인한 유저의 pk \n receiverId : 요청을 보낼 유저의 pk",
             dataTypeClass = Map.class,
@@ -60,7 +60,7 @@ public class NotificationController {
 
     @GetMapping("")
     @LoginRequired
-    @ApiOperation(value = "알림 목록 조회", notes = "현재 로그인한 사용자가 수신한 알림을 조회한다. (로그인 필요)")
+    @ApiOperation(value = "알림 목록 조회 (LoginRequired)", notes = "현재 로그인한 사용자가 수신한 알림을 조회한다.")
     @ApiImplicitParam(name = "userId", value = "로그인한 유저의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
     public ResponseEntity<ResponseDto<?>> getAllNotifications(int userId)
             throws Exception {
@@ -71,7 +71,7 @@ public class NotificationController {
 
     @DeleteMapping("")
     @LoginRequired
-    @ApiOperation(value = "알림 삭제", notes = "선택한 알림을 삭제한다. (로그인 필요)")
+    @ApiOperation(value = "알림 삭제 (LoginRequired)", notes = "선택한 알림을 삭제한다.")
     @ApiImplicitParam(name = "notificationId",
             value = "삭제할 알림의 pk",
             dataTypeClass = Integer.class,

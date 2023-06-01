@@ -33,7 +33,7 @@ public class FriendsController {
 
     @GetMapping
     @LoginRequired
-    @ApiOperation(value = "친구 목록 조회", notes = "친구 목록을 조회한다. (로그인 필요)")
+    @ApiOperation(value = "친구 목록 조회 (LoginRequired)", notes = "친구 목록을 조회한다.")
     @ApiImplicitParam(name = "userId", value = "로그인한 유저의 pk", required = true, dataTypeClass = Integer.class, defaultValue = "2")
     public ResponseEntity<ResponseDto<?>> friendsList(int userId) throws Exception {
         return ResponseEntity.ok(
@@ -46,7 +46,7 @@ public class FriendsController {
 
     @PostMapping
     @LoginRequired
-    @ApiOperation(value = "친구 요청 수락", notes = "친구 요청을 수락한다. (로그인 필요)")
+    @ApiOperation(value = "친구 요청 수락 (LoginRequired)", notes = "친구 요청을 수락한다.")
     @ApiImplicitParam(name = "notificationAndSenderAndUserId",
                     value = "userId : 로그인한 유저의 pk \n notificationId : 해당 알림의 pk \n senderId : 친구요청 보낸 유저의 pk",
                     dataTypeClass = Map.class,
@@ -65,7 +65,7 @@ public class FriendsController {
 
     @DeleteMapping
     @LoginRequired
-    @ApiOperation(value = "친구 삭제", notes = "친구를 삭제한다. (로그인 필요)")
+    @ApiOperation(value = "친구 삭제 (LoginRequired)", notes = "친구를 삭제한다.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "friendId",
                     value = "삭제할 친구 유저의 pk",
@@ -87,7 +87,7 @@ public class FriendsController {
 
     @GetMapping("/recommend")
     @LoginRequired
-    @ApiOperation(value = "친구 추천 목록 조회", notes = "추천 친구 목록을 조회한다. (로그인 필요)")
+    @ApiOperation(value = "친구 추천 목록 조회 (LoginRequired)", notes = "추천 친구 목록을 조회한다.")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "type",
                     value = "friends : 함께 아는 친구 추천 / preference : 취향 기반 친구 추천",
@@ -116,6 +116,7 @@ public class FriendsController {
 
     @GetMapping("/search")
     @LoginRequired
+    @ApiOperation(value = "친구 추가 요청할 유저 검색 (LoginRequired)", notes = "이름을 기준으로 유저를 검색한다.")
     @ApiImplicitParam(name = "keywordAndUserId",
             value = "keyword : 검색어 내용 \n userId : 로그인 한 유저의 pk" ,
             dataTypeClass = Map.class,

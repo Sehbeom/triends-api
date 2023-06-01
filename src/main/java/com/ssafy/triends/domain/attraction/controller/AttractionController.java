@@ -62,7 +62,7 @@ public class AttractionController {
 
     @GetMapping("/recommend")
     @LoginRequired
-    @ApiOperation(value="여행지 추천 - 취향 기반", notes = "로그인한 사용자의 취향에 적합한 여행지 추천 목록을 조회한다.")
+    @ApiOperation(value="여행지 추천 - 취향 기반 (LoginRequired)", notes = "로그인한 사용자의 취향에 적합한 여행지 추천 목록을 조회한다.")
     @ApiImplicitParam(name = "userId", value = "로그인한 유저의 pk", required = true, dataTypeClass = Integer.class, defaultValue = "2")
     public ResponseEntity<ResponseDto<?>> getRecommendAttractions(@RequestParam int userId)
             throws Exception {

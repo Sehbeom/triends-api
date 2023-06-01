@@ -64,7 +64,7 @@ public class ReviewController {
 
 	@PostMapping
 	@LoginRequired
-	@ApiOperation(value = "리뷰 작성", notes = "리뷰 작성 (로그인 필요)")
+	@ApiOperation(value = "리뷰 작성 (LoginRequired)", notes = "리뷰 작성")
 	@ApiImplicitParam(name = "reviewDto",
 			value = "userId : 로그인한 유저의 pk \n planId : 리뷰 작성할 플랜의 pk \n subject : 리뷰 제목 \n content : 리뷰 내용",
 			dataTypeClass = Map.class,
@@ -86,7 +86,7 @@ public class ReviewController {
 
 	@GetMapping
 	@LoginRequired
-	@ApiOperation(value = "내가 쓴 리뷰 목록 조회", notes = "내가 쓴 리뷰 목록 조회 (로그인 필요)")
+	@ApiOperation(value = "내가 쓴 리뷰 목록 조회 (LoginRequired)", notes = "내가 쓴 리뷰 목록 조회")
 	@ApiImplicitParam(name = "userId", value = "로그인한 유저의 pk", required = true, defaultValue = "2", dataTypeClass = Integer.class)
 	public ResponseEntity<?> getMyReviews(int userId){
 		try {
@@ -98,7 +98,7 @@ public class ReviewController {
 	}
 	@PutMapping
 	@LoginRequired
-	@ApiOperation(value = "리뷰 수정", notes = "리뷰 수정 (로그인 필요)")
+	@ApiOperation(value = "리뷰 수정 (LoginRequired)", notes = "리뷰 수정")
 	@ApiImplicitParam(name = "reviewDto",
 			value = "userId : 로그인한 유저의 pk \n reviewId : 수정할 리뷰의 pk \n subject : 리뷰 제목 \n content : 리뷰 내용",
 			dataTypeClass = Map.class,
@@ -121,7 +121,7 @@ public class ReviewController {
 
 	@DeleteMapping
 	@LoginRequired
-	@ApiOperation(value = "리뷰 삭제", notes = "리뷰 삭제 (로그인 필요)")
+	@ApiOperation(value = "리뷰 삭제 (LoginRequired)", notes = "리뷰 삭제")
 	@ApiImplicitParam(name = "reviewId", value = "삭제할 리뷰의 pk", dataTypeClass = Integer.class, defaultValue = "1", required = true)
 	public ResponseEntity<ResponseDto<?>> deleteReview(int reviewId)
 			throws Exception {
@@ -135,7 +135,7 @@ public class ReviewController {
 
 	@GetMapping("/like")
 	@LoginRequired
-	@ApiOperation(value = "리뷰 좋아요", notes = "리뷰 좋아요 (로그인 필요)")
+	@ApiOperation(value = "리뷰 좋아요 (LoginRequired)", notes = "리뷰 좋아요")
 	@ApiImplicitParam(name = "reviewAndUserId",
 			value = "userId : 로그인한 유저의 pk \n reviewId : 좋아요 할 리뷰의 pk",
 			dataTypeClass = Map.class,
@@ -151,7 +151,7 @@ public class ReviewController {
 
 	@GetMapping("/unlike")
 	@LoginRequired
-	@ApiOperation(value = "리뷰 좋아요 취소", notes = "리뷰 좋아요 취소 (로그인 필요)")
+	@ApiOperation(value = "리뷰 좋아요 취소 (LoginRequired)", notes = "리뷰 좋아요 취소")
 	@ApiImplicitParam(name = "reviewAndUserId",
 			value = "userId : 로그인한 유저의 pk \n reviewId : 좋아요 취소 할 리뷰의 pk",
 			dataTypeClass = Map.class,
@@ -167,7 +167,7 @@ public class ReviewController {
 
 	@GetMapping("/scrap")
 	@LoginRequired
-	@ApiOperation(value = "리뷰 스크랩 수 증가", notes = "리뷰 스크랩 버튼 클릭 시 호출")
+	@ApiOperation(value = "리뷰 스크랩 수 증가 (LoginRequired)", notes = "리뷰 스크랩 버튼 클릭 시 호출")
 	@ApiImplicitParam(name = "reviewId", value = "스크랩 수 증가 할 리뷰의 pk", dataTypeClass = Integer.class, defaultValue = "1", required = true)
 	public ResponseEntity<ResponseDto<?>> increaseReviewScrapped(int reviewId) throws Exception {
 		reviewService.increaseReviewScrapped(reviewId);
@@ -181,7 +181,7 @@ public class ReviewController {
 
 	@PostMapping("/rate")
 	@LoginRequired
-	@ApiOperation(value = "리뷰 작성 시 여행지 평점 적용", notes = "리뷰 작성 시 여행지 평점 적용")
+	@ApiOperation(value = "리뷰 작성 시 여행지 평점 적용 (LoginRequired)", notes = "리뷰 작성 시 여행지 평점 적용")
 	@ApiImplicitParam(name = "userAndContentAndReviewIdAndScore",
 			value = "userId : 로그인한 유저의 pk \n reviewId : 평점을 적용한 리뷰의 pk \n contentId : 평점을 적용할 여행지의 pk \n score : 평점(1~5)",
 			dataTypeClass = Map.class,
@@ -197,7 +197,7 @@ public class ReviewController {
 
 	@DeleteMapping("/rate")
 	@LoginRequired
-	@ApiOperation(value = "여행지 평점 적용 취소", notes = "여행지 평점 적용 취소")
+	@ApiOperation(value = "여행지 평점 적용 취소 (LoginRequired)", notes = "여행지 평점 적용 취소")
 	@ApiImplicitParam(name = "userAndContentAndReviewId",
 			value = "userId : 로그인한 유저의 pk \n reviewId : 평점 적용했던 리뷰의 pk \n contentId : 평점 적용 취소할 여행지의 pk",
 			dataTypeClass = Map.class,
