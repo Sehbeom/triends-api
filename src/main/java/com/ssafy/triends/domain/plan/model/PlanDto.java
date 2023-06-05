@@ -1,6 +1,7 @@
 package com.ssafy.triends.domain.plan.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel(value = "PlanDto(플랜)", description = "플랜 상세 정보를 담고 있다.")
 public class PlanDto {
 	private int planId;
 	private String title;

@@ -46,31 +46,36 @@
 ---
 
 ### Response Model
-<img src="src/main/resources/readmeimgs/response_model.png" width="300">
+<img src="src/main/resources/readmeimgs/response_model.png">
 
 
 ### 여행지 Model
-<img src="src/main/resources/readmeimgs/attraction_model.png" width="300">
+<img src="src/main/resources/readmeimgs/attraction_model.png">
 
 
 ### 댓글 Model
-<img src="src/main/resources/readmeimgs/comment_model.png" width="300">
+<img src="src/main/resources/readmeimgs/comment_model.png">
 
 
 ### 플랜 Model
-<img src="src/main/resources/readmeimgs/plan_model.png" width="400">
+<img src="src/main/resources/readmeimgs/plan_model.png">
 
+<img src="src/main/resources/readmeimgs/day_model.png">
+
+<img src="src/main/resources/readmeimgs/course_model.png">
+
+<img src="src/main/resources/readmeimgs/planmember_model.png">
 
 ### 공지사항 Model
-<img src="src/main/resources/readmeimgs/notice_model.png" width="300">
+<img src="src/main/resources/readmeimgs/notice_model.png">
 
 
 ### 리뷰 Model
-<img src="src/main/resources/readmeimgs/review_model.png" width="400">
+<img src="src/main/resources/readmeimgs/review_model.png">
 
 
 ### 유저 Model
-<img src="src/main/resources/readmeimgs/user_model.png" width="300">
+<img src="src/main/resources/readmeimgs/user_model.png">
 
 
 ## DB ERD
