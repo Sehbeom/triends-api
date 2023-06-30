@@ -85,9 +85,12 @@ public class PlanController {
     @ApiOperation(value = "플랜 수정 (LoginRequired)", notes = "플랜을 수정한다.")
     @ApiImplicitParam(name = "userAndPlanAndCourseInfo", value = "플랜 및 일자별 코스 정보 전달 필요 (포맷은 Postman 참고)", dataTypeClass = Map.class)
     public ResponseEntity<ResponseDto<?>> update(@RequestBody Map<String, Object> userAndPlanAndCourseInfo) throws Exception {
+        Map<String, Object> planInfo = (Map<String, Object>) userAndPlanAndCourseInfo.get("planInfo");
         return ResponseEntity.ok(
                 ResponseDto.createResponse(PlanResponseMessage.UPDATE_SUCCESS.getMessage(),
-                        planService.updatePlan(userAndPlanAndCourseInfo, (Integer) userAndPlanAndCourseInfo.get("userId"))));
+                        planService.updatePlan(userAndPlanAndCourseInfo,
+                                (Integer) userAndPlanAndCourseInfo.get("userId"),
+                                (Integer) planInfo.get("planId"))));
     }
 
     @PostMapping("/member")

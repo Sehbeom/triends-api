@@ -8,12 +8,16 @@ import com.ssafy.triends.domain.plan.model.PlanDto;
 import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PlanServiceImpl implements PlanService {
@@ -35,11 +39,15 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "Plan", key = "#planId", cacheManager = "cacheManager", unless = "#result == null")
     public PlanDto getPlanDetail(int planId) throws Exception {
         return planMapper.getPlanDetail(planId);
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = "Plan", key = "#planId", cacheManager = "cacheManager")
     public void delete(int planId) throws Exception {
         notificationMapper.deleteNotificationByPlanId(planId);
         planMapper.delete(planId);
@@ -61,7 +69,9 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public int updatePlan(Map<String, Object> planAndCourse, int userId) throws Exception {
+    @Transactional
+    @CacheEvict(value = "Plan", key = "#planId", cacheManager = "cacheManager")
+    public int updatePlan(Map<String, Object> planAndCourse, int userId, int planId) throws Exception {
         Map<String, Object> planInfo = (Map<String, Object>) planAndCourse.get("planInfo");
 
         PlanDto planDto = makePlanDto(planInfo);
